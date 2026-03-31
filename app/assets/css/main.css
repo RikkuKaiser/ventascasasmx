@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply scroll-smooth antialiased;
+  }
+  body {
+    @apply bg-night-900 text-slate-100 font-sans;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-white/[0.06] backdrop-blur-xl border border-white/[0.1] shadow-glass;
+  }
+  .glass-strong {
+    @apply bg-white/[0.09] backdrop-blur-2xl border border-white/[0.12] shadow-glass-lg;
+  }
+  .text-gradient-royal {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-royal-200 via-white to-royal-300;
+  }
+}
