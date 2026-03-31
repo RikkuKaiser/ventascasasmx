@@ -23,7 +23,10 @@ useHead(() => ({
 </script>
 
 <template>
-  <div v-if="inmueble" class="px-4 py-10 pb-28 md:pb-10">
+  <div
+    v-if="inmueble"
+    class="px-3 pb-[max(5.75rem,calc(4.25rem+env(safe-area-inset-bottom)))] pt-2 md:px-4 md:py-10 md:pb-10"
+  >
     <div class="mx-auto max-w-5xl">
       <NuxtLink
         to="/inmuebles"
@@ -38,7 +41,7 @@ useHead(() => ({
           :fotos="fotosGaleria"
           :titulo="inmueble.titulo"
         />
-        <div class="rounded-2xl glass p-6 md:p-8">
+        <div class="rounded-2xl glass p-5 md:p-8">
           <div class="flex flex-wrap gap-2">
             <span
               v-for="tag in inmueble.etiquetas"
@@ -59,8 +62,11 @@ useHead(() => ({
           <p class="mt-4 font-display text-2xl text-gradient-royal md:text-3xl">
             {{ store.formatearPrecio(inmueble) }}
           </p>
+          <div class="mt-4 md:hidden">
+            <CompartirInmueble :titulo="inmueble.titulo" compact />
+          </div>
           <div
-            class="mt-6 flex flex-col gap-4 border-t border-white/10 pt-6 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between"
+            class="mt-6 hidden gap-4 border-t border-white/10 pt-6 md:flex md:flex-row md:flex-wrap md:items-center md:justify-between"
           >
             <CompartirInmueble :titulo="inmueble.titulo" />
             <div class="flex flex-wrap items-center gap-3">
@@ -110,17 +116,23 @@ useHead(() => ({
       </div>
 
       <div
-        class="fixed bottom-0 left-0 right-0 z-40 border-t border-white/10 bg-night-900/92 px-4 py-3 backdrop-blur-xl md:hidden"
+        class="fixed bottom-0 left-0 right-0 z-50 border-t border-white/10 bg-night-900/95 px-2 pb-[max(0.25rem,env(safe-area-inset-bottom))] pt-1.5 backdrop-blur-xl md:hidden"
       >
-        <div class="mx-auto flex max-w-lg items-center justify-center gap-2">
-          <FavoritoBoton :inmueble-id="inmueble.id" variante="inline" />
-          <WhatsAppInmuebleCta variante="bar" :inmueble="inmueble" />
-          <NuxtLink
-            to="#comentarios"
-            class="shrink-0 rounded-xl bg-gradient-to-r from-royal-600 to-royal-800 px-4 py-2.5 text-sm font-semibold text-white shadow-royal"
-          >
-            Comentar
-          </NuxtLink>
+        <div class="mx-auto grid max-w-lg grid-cols-3 gap-2">
+          <div class="flex items-center justify-center">
+            <FavoritoBoton :inmueble-id="inmueble.id" variante="overlay" />
+          </div>
+          <div class="flex min-w-0 items-stretch">
+            <WhatsAppInmuebleCta variante="bar" class="w-full" :inmueble="inmueble" />
+          </div>
+          <div class="flex min-w-0 items-stretch">
+            <NuxtLink
+              to="#comentarios"
+              class="flex h-11 w-full min-w-0 items-center justify-center rounded-xl bg-gradient-to-r from-royal-600 to-royal-800 px-1.5 text-center text-xs font-semibold leading-tight text-white shadow-royal sm:text-sm"
+            >
+              Comentarios
+            </NuxtLink>
+          </div>
         </div>
       </div>
     </div>

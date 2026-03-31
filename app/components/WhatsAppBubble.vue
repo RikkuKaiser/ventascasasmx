@@ -1,12 +1,16 @@
 <script setup lang="ts">
+const route = useRoute()
 const { defaultMessage, waUrlForText } = useWhatsApp()
 
 const waHref = computed(() => waUrlForText(defaultMessage.value))
+
+/** Evita duplicar WhatsApp con la barra fija de la ficha de inmueble */
+const esFichaInmueble = computed(() => /^\/inmuebles\/[^/]+$/.test(route.path))
 </script>
 
 <template>
   <div
-    v-if="waHref"
+    v-if="waHref && !esFichaInmueble"
     class="group fixed z-[60] [bottom:max(1.25rem,env(safe-area-inset-bottom))] [right:max(1.25rem,env(safe-area-inset-right))] sm:[bottom:max(1.5rem,env(safe-area-inset-bottom))] sm:[right:max(1.5rem,env(safe-area-inset-right))]"
   >
     <div

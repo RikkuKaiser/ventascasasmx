@@ -1,7 +1,12 @@
 <script setup lang="ts">
-const props = defineProps<{
-  titulo: string
-}>()
+const props = withDefaults(
+  defineProps<{
+    titulo: string
+    /** Botones más pequeños (p. ej. móvil en ficha) */
+    compact?: boolean
+  }>(),
+  { compact: false },
+)
 
 const route = useRoute()
 const requestURL = useRequestURL()
@@ -54,18 +59,20 @@ async function compartirNativo() {
 </script>
 
 <template>
-  <div class="flex flex-wrap gap-2">
+  <div class="flex flex-wrap gap-2" :class="compact ? 'gap-1.5' : ''">
     <button
       type="button"
-      class="rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-slate-200 transition hover:bg-white/10"
+      class="rounded-xl border border-white/15 bg-white/5 font-medium text-slate-200 transition hover:bg-white/10"
+      :class="compact ? 'px-3 py-1.5 text-xs' : 'px-4 py-2 text-sm'"
       @click="copiar"
     >
-      {{ copiado ? '¡Enlace copiado!' : 'Copiar enlace' }}
+      {{ copiado ? '¡Copiado!' : 'Copiar enlace' }}
     </button>
     <button
       v-if="puedeWebShare"
       type="button"
-      class="rounded-xl border border-royal-500/35 bg-royal-950/40 px-4 py-2 text-sm font-medium text-royal-100 transition hover:border-royal-400/50 hover:bg-royal-900/50"
+      class="rounded-xl border border-royal-500/35 bg-royal-950/40 font-medium text-royal-100 transition hover:border-royal-400/50 hover:bg-royal-900/50"
+      :class="compact ? 'px-3 py-1.5 text-xs' : 'px-4 py-2 text-sm'"
       @click="compartirNativo"
     >
       Compartir…

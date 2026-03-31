@@ -12,7 +12,9 @@
       />
     </div>
     <AppHeader />
-    <main class="relative z-10 flex-1">
+    <main
+      class="relative z-10 flex-1 pt-[max(3.5rem,env(safe-area-inset-top)+2.75rem)] md:pt-0"
+    >
       <slot />
     </main>
     <footer

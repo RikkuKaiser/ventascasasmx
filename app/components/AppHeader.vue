@@ -43,8 +43,9 @@ onUnmounted(() => {
 </script>
 
 <template>
+  <!-- Barra completa solo desde md; en móvil solo el botón flotante abre el menú -->
   <header
-    class="sticky top-0 z-50 border-b border-white/10 bg-night-900/40 backdrop-blur-2xl supports-[backdrop-filter]:bg-night-900/30"
+    class="sticky top-0 z-50 hidden border-b border-white/10 bg-night-900/40 backdrop-blur-2xl supports-[backdrop-filter]:bg-night-900/30 md:block"
   >
     <div
       class="mx-auto flex h-14 max-w-6xl items-center justify-between gap-2 px-3 sm:h-16 sm:gap-4 sm:px-4"
@@ -63,7 +64,7 @@ onUnmounted(() => {
       </NuxtLink>
 
       <nav
-        class="hidden flex-1 items-center justify-center gap-0.5 sm:flex sm:gap-1"
+        class="flex flex-1 items-center justify-center gap-1"
         aria-label="Principal"
       >
         <NuxtLink
@@ -107,7 +108,7 @@ onUnmounted(() => {
           </span>
           <button
             type="button"
-            class="hidden rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-sm text-slate-200 transition hover:bg-white/10 sm:inline-flex"
+            class="rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-sm text-slate-200 transition hover:bg-white/10"
             @click="auth.cerrarSesion()"
           >
             Salir
@@ -116,42 +117,47 @@ onUnmounted(() => {
         <template v-else>
           <NuxtLink
             to="/login"
-            class="hidden rounded-lg px-2 py-2 text-sm text-slate-300 hover:text-white sm:inline-flex sm:px-3"
+            class="inline-flex items-center rounded-lg px-2 py-2 text-sm text-slate-300 hover:text-white sm:px-3"
           >
             Entrar
           </NuxtLink>
           <NuxtLink
             to="/registro"
-            class="hidden rounded-lg bg-gradient-to-r from-royal-600 to-royal-800 px-3 py-2 text-sm font-medium text-white shadow-royal ring-1 ring-white/20 transition hover:brightness-110 sm:inline-flex sm:px-4"
+            class="inline-flex items-center rounded-lg bg-gradient-to-r from-royal-600 to-royal-800 px-3 py-2 text-sm font-medium text-white shadow-royal ring-1 ring-white/20 transition hover:brightness-110 sm:px-4"
           >
             Registrarse
           </NuxtLink>
         </template>
-
-        <button
-          type="button"
-          class="flex h-10 w-10 items-center justify-center rounded-lg text-slate-300 transition hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-400 sm:hidden"
-          :aria-expanded="menuAbierto"
-          aria-controls="menu-movil"
-          aria-label="Abrir menú"
-          @click="menuAbierto = true"
-        >
-          <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-          </svg>
-        </button>
       </div>
     </div>
+  </header>
 
-    <Teleport to="body">
-      <div
-        v-show="menuAbierto"
-        id="menu-movil"
-        class="fixed inset-0 z-[70] sm:hidden"
-        role="dialog"
-        aria-modal="true"
-        aria-label="Menú de navegación"
-      >
+  <button
+    type="button"
+    class="fixed z-[55] flex h-11 w-11 items-center justify-center rounded-xl border border-white/15 bg-night-900/92 text-slate-200 shadow-lg backdrop-blur-md transition hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-400 md:hidden"
+    :class="[
+      'right-[max(0.75rem,env(safe-area-inset-right))]',
+      'top-[max(0.75rem,env(safe-area-inset-top))]',
+    ]"
+    :aria-expanded="menuAbierto"
+    aria-controls="menu-movil"
+    aria-label="Abrir menú"
+    @click="menuAbierto = true"
+  >
+    <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+    </svg>
+  </button>
+
+  <Teleport to="body">
+    <div
+      v-show="menuAbierto"
+      id="menu-movil"
+      class="fixed inset-0 z-[70] md:hidden"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Menú de navegación"
+    >
         <button
           type="button"
           class="absolute inset-0 bg-night-950/80 backdrop-blur-sm"
@@ -239,5 +245,4 @@ onUnmounted(() => {
         </nav>
       </div>
     </Teleport>
-  </header>
 </template>
