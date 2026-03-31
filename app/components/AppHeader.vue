@@ -12,38 +12,13 @@ const links = [
   { to: '/broker', label: 'Para asesores' },
 ]
 
-const menuAbierto = ref(false)
-
 function isActive(path: string) {
   if (path === '/') return route.path === '/'
   return route.path.startsWith(path)
 }
-
-function cerrarMenu() {
-  menuAbierto.value = false
-}
-
-watch(
-  () => route.fullPath,
-  () => {
-    cerrarMenu()
-  },
-)
-
-watch(menuAbierto, (abierto) => {
-  if (!import.meta.client)
-    return
-  document.documentElement.classList.toggle('overflow-hidden', abierto)
-})
-
-onUnmounted(() => {
-  if (import.meta.client)
-    document.documentElement.classList.remove('overflow-hidden')
-})
 </script>
 
 <template>
-  <!-- Barra completa solo desde md; en móvil solo el botón flotante abre el menú -->
   <header
     class="sticky top-0 z-50 hidden border-b border-white/10 bg-night-900/40 backdrop-blur-2xl supports-[backdrop-filter]:bg-night-900/30 md:block"
   >
@@ -53,7 +28,6 @@ onUnmounted(() => {
       <NuxtLink
         to="/"
         class="group flex min-w-0 items-center gap-2 font-display text-base font-semibold tracking-tight text-white sm:text-lg"
-        @click="cerrarMenu"
       >
         <span
           class="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-royal-500 to-royal-800 shadow-royal ring-1 ring-white/20 transition group-hover:scale-105 sm:h-9 sm:w-9"
@@ -102,7 +76,7 @@ onUnmounted(() => {
 
         <template v-if="auth.estaAutenticado && auth.sesion">
           <span
-            class="hidden max-w-[140px] truncate text-sm text-slate-400 md:inline"
+            class="hidden max-w-[140px] truncate text-sm text-slate-400 lg:inline"
           >
             {{ auth.sesion.nombre }}
           </span>
@@ -131,118 +105,4 @@ onUnmounted(() => {
       </div>
     </div>
   </header>
-
-  <button
-    type="button"
-    class="fixed z-[55] flex h-11 w-11 items-center justify-center rounded-xl border border-white/15 bg-night-900/92 text-slate-200 shadow-lg backdrop-blur-md transition hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-400 md:hidden"
-    :class="[
-      'right-[max(0.75rem,env(safe-area-inset-right))]',
-      'top-[max(0.75rem,env(safe-area-inset-top))]',
-    ]"
-    :aria-expanded="menuAbierto"
-    aria-controls="menu-movil"
-    aria-label="Abrir menú"
-    @click="menuAbierto = true"
-  >
-    <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-    </svg>
-  </button>
-
-  <Teleport to="body">
-    <div
-      v-show="menuAbierto"
-      id="menu-movil"
-      class="fixed inset-0 z-[70] md:hidden"
-      role="dialog"
-      aria-modal="true"
-      aria-label="Menú de navegación"
-    >
-        <button
-          type="button"
-          class="absolute inset-0 bg-night-950/80 backdrop-blur-sm"
-          aria-label="Cerrar menú"
-          @click="cerrarMenu"
-        />
-        <nav
-          class="absolute right-0 top-0 flex h-full w-[min(100%,20rem)] flex-col border-l border-white/10 bg-night-900/98 shadow-2xl backdrop-blur-xl"
-          @click.stop
-        >
-          <div class="flex items-center justify-between border-b border-white/10 px-4 py-3">
-            <span class="text-sm font-semibold text-white">Menú</span>
-            <button
-              type="button"
-              class="flex h-10 w-10 items-center justify-center rounded-lg text-slate-400 hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-400"
-              aria-label="Cerrar"
-              @click="cerrarMenu"
-            >
-              <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-          <div class="flex-1 overflow-y-auto px-2 py-4">
-            <NuxtLink
-              v-for="l in links"
-              :key="l.to"
-              :to="l.to"
-              class="block rounded-xl px-4 py-3.5 text-base font-medium transition active:bg-white/10"
-              :class="
-                isActive(l.to)
-                  ? 'bg-white/10 text-white'
-                  : 'text-slate-300 hover:bg-white/5 hover:text-white'
-              "
-              @click="cerrarMenu"
-            >
-              {{ l.label }}
-            </NuxtLink>
-            <NuxtLink
-              to="/favoritos"
-              class="mt-1 block rounded-xl px-4 py-3.5 text-base font-medium text-slate-300 hover:bg-white/5 hover:text-white"
-              @click="cerrarMenu"
-            >
-              Favoritos
-              <span v-if="favoritos.cantidad > 0" class="ml-2 text-royal-300">({{ favoritos.cantidad }})</span>
-            </NuxtLink>
-            <NuxtLink
-              to="/asesores"
-              class="mt-1 block rounded-xl px-4 py-3.5 text-base font-medium text-slate-300 hover:bg-white/5 hover:text-white"
-              @click="cerrarMenu"
-            >
-              Formulario de asesores
-            </NuxtLink>
-          </div>
-          <div class="border-t border-white/10 p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
-            <template v-if="auth.estaAutenticado && auth.sesion">
-              <p class="truncate px-2 text-sm text-slate-500">
-                {{ auth.sesion.nombre }}
-              </p>
-              <button
-                type="button"
-                class="mt-3 w-full rounded-xl border border-white/15 py-3 text-sm font-medium text-slate-200 hover:bg-white/5"
-                @click="auth.cerrarSesion(); cerrarMenu()"
-              >
-                Cerrar sesión
-              </button>
-            </template>
-            <template v-else>
-              <NuxtLink
-                to="/login"
-                class="block w-full rounded-xl border border-white/15 py-3 text-center text-sm font-medium text-white hover:bg-white/5"
-                @click="cerrarMenu"
-              >
-                Entrar
-              </NuxtLink>
-              <NuxtLink
-                to="/registro"
-                class="mt-2 block w-full rounded-xl bg-gradient-to-r from-royal-600 to-royal-800 py-3 text-center text-sm font-semibold text-white shadow-royal"
-                @click="cerrarMenu"
-              >
-                Registrarse
-              </NuxtLink>
-            </template>
-          </div>
-        </nav>
-      </div>
-    </Teleport>
 </template>

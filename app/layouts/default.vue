@@ -1,3 +1,11 @@
+<script setup lang="ts">
+import { useAuthStore } from '~/stores/auth'
+import { useFavoritosStore } from '~/stores/favoritos'
+
+const auth = useAuthStore()
+const favoritos = useFavoritosStore()
+</script>
+
 <template>
   <div class="relative min-h-screen flex flex-col">
     <div
@@ -33,6 +41,51 @@
             Colabora como asesor
           </NuxtLink>
         </p>
+
+        <nav
+          class="mt-8 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 border-t border-white/5 pt-6 text-xs text-slate-500 md:hidden"
+          aria-label="Navegación"
+        >
+          <NuxtLink to="/" class="transition hover:text-royal-300">
+            Inicio
+          </NuxtLink>
+          <span class="text-slate-700" aria-hidden="true">·</span>
+          <NuxtLink to="/inmuebles" class="transition hover:text-royal-300">
+            Inmuebles
+          </NuxtLink>
+          <span class="text-slate-700" aria-hidden="true">·</span>
+          <NuxtLink to="/favoritos" class="transition hover:text-royal-300">
+            Favoritos
+            <template v-if="favoritos.cantidad > 0">
+              ({{ favoritos.cantidad > 9 ? '9+' : favoritos.cantidad }})
+            </template>
+          </NuxtLink>
+          <span class="text-slate-700" aria-hidden="true">·</span>
+          <NuxtLink to="/asesores" class="transition hover:text-royal-300">
+            Asesores
+          </NuxtLink>
+          <template v-if="auth.estaAutenticado">
+            <span class="text-slate-700" aria-hidden="true">·</span>
+            <button
+              type="button"
+              class="transition hover:text-royal-300"
+              @click="auth.cerrarSesion()"
+            >
+              Salir
+            </button>
+          </template>
+          <template v-else>
+            <span class="text-slate-700" aria-hidden="true">·</span>
+            <NuxtLink to="/login" class="transition hover:text-royal-300">
+              Entrar
+            </NuxtLink>
+            <span class="text-slate-700" aria-hidden="true">·</span>
+            <NuxtLink to="/registro" class="transition hover:text-royal-300">
+              Registro
+            </NuxtLink>
+          </template>
+        </nav>
+
         <nav
           class="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 border-t border-white/5 pt-8 text-xs text-slate-600"
           aria-label="Legal"
