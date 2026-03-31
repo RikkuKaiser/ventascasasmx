@@ -12,11 +12,26 @@ const demo: Inmueble[] = [
     moneda: 'MXN',
     ciudad: 'Ciudad de México',
     zona: 'Polanco',
-    m2: 280,
+    m2Superficie: 285,
+    m2Construccion: 280,
     habitaciones: 3,
     banos: 3,
     destacado: true,
     etiquetas: ['Nuevo', 'Amueblado', 'Estacionamiento'],
+    tipoVivienda: 'departamento',
+    estacionamientos: 3,
+    pisoDepartamento: 22,
+    pisosEdificio: 24,
+    amenidades: [
+      'Concierge',
+      'Gimnasio',
+      'Spa',
+      'Alberca infinity',
+      'Salón de eventos',
+      'Business center',
+      'Terraza común',
+    ],
+    cuotaMantenimiento: 18500,
     imagen:
       'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80',
     galeria: [
@@ -36,11 +51,24 @@ const demo: Inmueble[] = [
     moneda: 'MXN',
     ciudad: 'Monterrey',
     zona: 'Valle',
-    m2: 320,
+    m2Superficie: 340,
+    m2Construccion: 320,
     habitaciones: 4,
     banos: 4,
     destacado: true,
     etiquetas: ['Jardín', 'Alberca'],
+    tipoVivienda: 'casa_residencial',
+    estacionamientos: 4,
+    pisosVivienda: 2,
+    amenidades: [
+      'Alberca',
+      'Jardín',
+      'Cuarto de servicio',
+      'Bodega',
+      'Persianas eléctricas',
+      'Preparación paneles solares',
+    ],
+    cuotaMantenimiento: 0,
     imagen:
       'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80',
     galeria: [
@@ -60,11 +88,22 @@ const demo: Inmueble[] = [
     moneda: 'MXN',
     ciudad: 'Guadalajara',
     zona: 'Lafayette',
-    m2: 95,
+    m2Superficie: 95,
+    m2Construccion: 95,
     habitaciones: 1,
     banos: 2,
     destacado: false,
     etiquetas: ['Loft', 'Pet friendly'],
+    tipoVivienda: 'loft',
+    estacionamientos: 1,
+    pisosVivienda: 1,
+    amenidades: [
+      'Pet friendly',
+      'Cocina integral',
+      'Closet vestidor',
+      'Bodega en sótano',
+    ],
+    cuotaMantenimiento: 3200,
     imagen:
       'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1200&q=80',
     galeria: [
@@ -83,11 +122,24 @@ const demo: Inmueble[] = [
     moneda: 'MXN',
     ciudad: 'Los Cabos',
     zona: 'Costa',
-    m2: 410,
+    m2Superficie: 480,
+    m2Construccion: 410,
     habitaciones: 5,
     banos: 5,
     destacado: true,
     etiquetas: ['Frente al mar', 'Lujo'],
+    tipoVivienda: 'casa',
+    estacionamientos: 6,
+    pisosVivienda: 2,
+    amenidades: [
+      'Frente a playa',
+      'Alberca infinity',
+      'Muelle',
+      'Cava de vinos',
+      'Cine en casa',
+      'Cuarto de blancos',
+    ],
+    cuotaMantenimiento: 22000,
     imagen:
       'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1200&q=80',
     galeria: [
@@ -107,11 +159,23 @@ const demo: Inmueble[] = [
     moneda: 'MXN',
     ciudad: 'Querétaro',
     zona: 'Centro',
-    m2: 110,
+    m2Superficie: 110,
+    m2Construccion: 110,
     habitaciones: 2,
     banos: 2,
     destacado: false,
     etiquetas: ['Centro', 'Inversión'],
+    tipoVivienda: 'departamento',
+    estacionamientos: 1,
+    pisoDepartamento: 2,
+    pisosEdificio: 4,
+    amenidades: [
+      'Azotea común',
+      'Elevador',
+      'Intercom',
+      'Preparación minisplit',
+    ],
+    cuotaMantenimiento: 2800,
     imagen:
       'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1200&q=80',
     galeria: [
@@ -130,11 +194,23 @@ const demo: Inmueble[] = [
     moneda: 'MXN',
     ciudad: 'Ensenada',
     zona: 'Valle de Guadalupe',
-    m2: 520,
+    m2Superficie: 520,
+    m2Construccion: 285,
     habitaciones: 4,
     banos: 4,
     destacado: false,
     etiquetas: ['Campo', 'Viñedo'],
+    tipoVivienda: 'casa_residencial',
+    estacionamientos: 4,
+    pisosVivienda: 1,
+    amenidades: [
+      'Viñedo',
+      'Bodega de vinos',
+      'Asador',
+      'Huerto',
+      'Estacionamiento visitas',
+    ],
+    cuotaMantenimiento: 0,
     imagen:
       'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=1200&q=80',
     galeria: [
@@ -154,11 +230,27 @@ const demo: Inmueble[] = [
     moneda: 'MXN',
     ciudad: 'Ciudad de México',
     zona: 'Santa Fe',
-    m2: 145,
+    m2Superficie: 145,
+    m2Construccion: 145,
     habitaciones: 2,
     banos: 2,
     destacado: false,
     etiquetas: ['Amenidades', 'Inversión', 'Nuevo'],
+    tipoVivienda: 'departamento',
+    estacionamientos: 2,
+    pisoDepartamento: 24,
+    pisosEdificio: 42,
+    amenidades: [
+      'Lobby doble altura',
+      'Gimnasio',
+      'Spa seco',
+      'Alberca infinity (azotea)',
+      'Coworking',
+      'Estacionamiento techado',
+      'Seguridad 24 h',
+      'Salón de juegos',
+    ],
+    cuotaMantenimiento: 15200,
     imagen:
       'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&q=80',
     galeria: [
@@ -166,6 +258,72 @@ const demo: Inmueble[] = [
       'https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?w=1600&q=80',
       'https://images.unsplash.com/photo-1600607687644-c7171b42498f?w=1600&q=80',
       'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=1600&q=80',
+    ],
+  },
+  {
+    id: '8',
+    titulo: 'Terreno habitacional en esquina',
+    descripcion:
+      'Polígono regular, servicios en banqueta y uso de suelo habitacional. Listo para proyecto residencial o dúplex.',
+    precio: 3180000,
+    moneda: 'MXN',
+    ciudad: 'Tijuana',
+    zona: 'Zona Río',
+    m2Superficie: 240,
+    m2Construccion: 0,
+    habitaciones: 0,
+    banos: 0,
+    destacado: false,
+    etiquetas: ['Terreno', 'Inversión'],
+    tipoVivienda: 'terreno',
+    estacionamientos: 0,
+    amenidades: [
+      'Esquina',
+      'Uso habitacional',
+      'Agua y drenaje en banqueta',
+      'Cerca de avenida principal',
+    ],
+    cuotaMantenimiento: 0,
+    imagen:
+      'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1200&q=80',
+    galeria: [
+      'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1600&q=80',
+      'https://images.unsplash.com/photo-1524813686510-a57563d77965?w=1600&q=80',
+      'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1600&q=80',
+    ],
+  },
+  {
+    id: '9',
+    titulo: 'Dúplex con roof garden privado',
+    descripcion:
+      'Dos niveles independientes en condominio cerrado. Roof garden con asador y excelente iluminación.',
+    precio: 6850000,
+    moneda: 'MXN',
+    ciudad: 'Puebla',
+    zona: 'Angelópolis',
+    m2Superficie: 185,
+    m2Construccion: 168,
+    habitaciones: 3,
+    banos: 3,
+    destacado: false,
+    etiquetas: ['Dúplex', 'Roof garden'],
+    tipoVivienda: 'duplex',
+    estacionamientos: 2,
+    pisosVivienda: 2,
+    amenidades: [
+      'Roof garden',
+      'Asador',
+      'Condominio cerrado',
+      'Áreas verdes comunes',
+      'Juegos infantiles',
+    ],
+    cuotaMantenimiento: 4500,
+    imagen:
+      'https://images.unsplash.com/photo-1600585154084-4e5fe7c39198?w=1200&q=80',
+    galeria: [
+      'https://images.unsplash.com/photo-1600585154084-4e5fe7c39198?w=1600&q=80',
+      'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1600&q=80',
+      'https://images.unsplash.com/photo-1600566752355-35792bedcfea?w=1600&q=80',
     ],
   },
 ]
@@ -187,5 +345,24 @@ export const useInmueblesStore = defineStore('inmuebles', () => {
     }).format(i.precio)
   }
 
-  return { lista, destacados, porId, formatearPrecio }
+  function formatearCuotaMantenimiento(i: Inmueble) {
+    const c = Number(i.cuotaMantenimiento)
+    if (!Number.isFinite(c) || c <= 0)
+      return 'No aplica'
+    const moneda
+      = i.moneda && i.moneda.length === 3 ? i.moneda : 'MXN'
+    return `${new Intl.NumberFormat('es-MX', {
+      style: 'currency',
+      currency: moneda,
+      maximumFractionDigits: 0,
+    }).format(c)} / mes`
+  }
+
+  return {
+    lista,
+    destacados,
+    porId,
+    formatearPrecio,
+    formatearCuotaMantenimiento,
+  }
 })

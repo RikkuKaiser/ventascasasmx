@@ -5,6 +5,16 @@ import { useInmueblesStore } from '~/stores/inmuebles'
 const props = defineProps<{ inmueble: Inmueble }>()
 const store = useInmueblesStore()
 
+const esTerreno = computed(() => props.inmueble.tipoVivienda === 'terreno')
+
+const rawM2 = computed(() => props.inmueble as Inmueble & { m2?: number })
+const m2Sup = computed(
+  () => rawM2.value.m2Superficie ?? rawM2.value.m2 ?? 0,
+)
+const m2Cons = computed(
+  () => rawM2.value.m2Construccion ?? rawM2.value.m2 ?? m2Sup.value,
+)
+
 /** Textos cortos no muestran el toggle (~2 líneas en tarjeta) */
 const umbralVerMas = 115
 const mostrarVerMas = computed(
@@ -92,7 +102,16 @@ watch(
         <div
           class="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-slate-400"
         >
-          <span class="inline-flex items-center gap-1.5" title="Superficie">
+          <span
+            class="inline-flex items-center gap-1.5"
+            :title="
+              esTerreno
+                ? `Superficie: ${m2Sup} m²`
+                : m2Cons > 0 && m2Cons !== m2Sup
+                  ? `Construcción: ${m2Cons} m² · Superficie: ${m2Sup} m²`
+                  : `Superficie: ${m2Sup} m² · Construcción: ${m2Cons} m²`
+            "
+          >
             <svg
               class="h-4 w-4 shrink-0 text-royal-400/90"
               fill="none"
@@ -107,7 +126,9 @@ watch(
                 d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 013.75 9.375v-4.5zM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5zM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0113.5 9.375v-4.5zM13.5 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5z"
               />
             </svg>
-            <span>{{ inmueble.m2 }} m²</span>
+            <span v-if="esTerreno">{{ m2Sup }} m²</span>
+            <span v-else-if="m2Cons > 0 && m2Cons !== m2Sup">{{ m2Cons }} / {{ m2Sup }} m²</span>
+            <span v-else>{{ m2Sup }} m²</span>
           </span>
           <span class="inline-flex items-center gap-1.5" title="Recámaras">
             <svg
@@ -124,7 +145,7 @@ watch(
                 d="M2 13.5h20v4.5a1 1 0 01-1 1H3a1 1 0 01-1-1v-4.5zm2-3V9a3 3 0 013-3h10a3 3 0 013 3v1.5"
               />
             </svg>
-            <span>{{ inmueble.habitaciones }} rec.</span>
+            <span>{{ esTerreno ? '—' : `${inmueble.habitaciones} rec.` }}</span>
           </span>
           <span class="inline-flex items-center gap-1.5" title="Baños">
             <svg
@@ -141,7 +162,7 @@ watch(
                 d="M4 12h16v5a3 3 0 01-3 3H7a3 3 0 01-3-3v-5zm0 0V9a1 1 0 011-1h1.5M20 9a1 1 0 00-1-1h-1.5M8 8V6m8 2V6"
               />
             </svg>
-            <span>{{ inmueble.banos }} baños</span>
+            <span>{{ esTerreno ? '—' : `${inmueble.banos} baños` }}</span>
           </span>
         </div>
         <div class="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">

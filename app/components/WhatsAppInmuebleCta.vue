@@ -22,14 +22,26 @@ const enlaceInmueble = computed(
 const mensaje = computed(() => {
   const i = props.inmueble
   const precio = store.formatearPrecio(i)
-  return [
+  const legacy = i as Inmueble & { m2?: number }
+  const sup = legacy.m2Superficie ?? legacy.m2
+  const cons = legacy.m2Construccion ?? legacy.m2
+  const partesMetro: string[] = []
+  if (typeof sup === 'number' && Number.isFinite(sup))
+    partesMetro.push(`Superficie: ${sup} m²`)
+  if (typeof cons === 'number' && Number.isFinite(cons) && cons > 0)
+    partesMetro.push(`Construcción: ${cons} m²`)
+  const metros = partesMetro.join(' · ')
+
+  const lineas = [
     'Hola, me interesa el siguiente inmueble en LuxeInmuebles:',
     '',
     i.titulo,
     `${i.ciudad} · ${i.zona}`,
-    precio,
-    enlaceInmueble.value,
-  ].join('\n')
+  ]
+  if (metros)
+    lineas.push(metros)
+  lineas.push(precio, enlaceInmueble.value)
+  return lineas.join('\n')
 })
 
 const waHref = computed(() => waUrlForText(mensaje.value))

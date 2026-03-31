@@ -84,29 +84,7 @@ useHead(() => ({
           <ComentariosPanel :inmueble-id="inmueble.id" />
         </div>
         <aside class="space-y-4">
-          <div class="rounded-2xl glass p-6">
-            <h3 class="text-sm font-semibold uppercase tracking-wider text-royal-300">
-              Ficha técnica
-            </h3>
-            <dl class="mt-4 space-y-3 text-sm">
-              <div class="flex justify-between border-b border-white/5 pb-2">
-                <dt class="text-slate-500">Superficie</dt>
-                <dd class="font-medium text-white">{{ inmueble.m2 }} m²</dd>
-              </div>
-              <div class="flex justify-between border-b border-white/5 pb-2">
-                <dt class="text-slate-500">Recámaras</dt>
-                <dd class="font-medium text-white">{{ inmueble.habitaciones }}</dd>
-              </div>
-              <div class="flex justify-between border-b border-white/5 pb-2">
-                <dt class="text-slate-500">Baños</dt>
-                <dd class="font-medium text-white">{{ inmueble.banos }}</dd>
-              </div>
-              <div class="flex justify-between pt-1">
-                <dt class="text-slate-500">Moneda</dt>
-                <dd class="font-medium text-white">{{ inmueble.moneda }}</dd>
-              </div>
-            </dl>
-          </div>
+          <InmuebleFichaTecnica :inmueble="inmueble" />
           <div
             class="rounded-2xl border border-royal-500/25 bg-royal-950/40 p-6 backdrop-blur-xl"
           >
