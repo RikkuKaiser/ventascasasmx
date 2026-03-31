@@ -9,6 +9,16 @@ export default defineNuxtConfig({
       whatsappDefaultMessage:
         process.env.NUXT_PUBLIC_WHATSAPP_MESSAGE
         || 'Hola, me gustaría recibir más información sobre LuxeInmuebles.',
+      /** Correo para ARCO, privacidad y consultas legales (páginas legales) */
+      privacidadEmail:
+        process.env.NUXT_PUBLIC_PRIVACIDAD_EMAIL || 'privacidad@luxeinmuebles.com',
+      /** Domicilio para oír y recibir notificaciones del responsable */
+      responsableDomicilio:
+        process.env.NUXT_PUBLIC_RESPONSABLE_DOMICILIO
+        || 'Calle Ejemplo 100, Col. Centro, Alcaldía Cuauhtémoc, Ciudad de México, CDMX, C.P. 06000, México',
+      /** Razón social o nombre comercial del responsable (opcional) */
+      responsableNombre:
+        process.env.NUXT_PUBLIC_RESPONSABLE_NOMBRE || 'LuxeInmuebles',
     },
   },
   modules: ['@pinia/nuxt', '@nuxtjs/tailwindcss'],

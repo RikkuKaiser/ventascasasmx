@@ -8,10 +8,15 @@ const router = useRouter()
 const nombre = ref('')
 const email = ref('')
 const password = ref('')
+const aceptoLegales = ref(false)
 const error = ref('')
 
 function submit() {
   error.value = ''
+  if (!aceptoLegales.value) {
+    error.value = 'Debes aceptar los Términos y el Aviso de privacidad.'
+    return
+  }
   const r = auth.registrar(nombre.value, email.value, password.value)
   if (!r.ok) {
     error.value = r.error
@@ -65,6 +70,27 @@ function submit() {
             class="w-full rounded-xl border border-white/10 bg-night-850/80 px-4 py-3 text-sm text-white focus:border-royal-500/50 focus:outline-none focus:ring-2 focus:ring-royal-500/30"
           />
         </div>
+        <label class="flex cursor-pointer items-start gap-3 text-sm text-slate-400">
+          <input
+            v-model="aceptoLegales"
+            type="checkbox"
+            class="mt-1 rounded border-white/20 bg-night-850 text-royal-600 focus:ring-royal-500/40"
+          />
+          <span>
+            He leído y acepto los
+            <NuxtLink
+              to="/terminos"
+              class="font-medium text-royal-300 hover:text-white"
+              @click.stop
+            >Términos y condiciones</NuxtLink>
+            y el
+            <NuxtLink
+              to="/aviso-privacidad"
+              class="font-medium text-royal-300 hover:text-white"
+              @click.stop
+            >Aviso de privacidad</NuxtLink>.
+          </span>
+        </label>
         <p v-if="error" class="text-sm text-red-400">{{ error }}</p>
         <button
           type="submit"

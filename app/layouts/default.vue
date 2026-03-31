@@ -21,6 +21,31 @@
       >
         <p class="font-display text-slate-400">LuxeInmuebles</p>
         <p class="mt-1">Anuncia y descubre inmuebles con estilo.</p>
+        <p class="mt-4">
+          <NuxtLink
+            to="/broker"
+            class="text-royal-400 transition hover:text-royal-200"
+          >
+            Colabora como asesor
+          </NuxtLink>
+        </p>
+        <nav
+          class="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 border-t border-white/5 pt-8 text-xs text-slate-600"
+          aria-label="Legal"
+        >
+          <NuxtLink
+            to="/terminos"
+            class="text-slate-500 transition hover:text-royal-300"
+          >
+            Términos y condiciones
+          </NuxtLink>
+          <NuxtLink
+            to="/aviso-privacidad"
+            class="text-slate-500 transition hover:text-royal-300"
+          >
+            Aviso de privacidad
+          </NuxtLink>
+        </nav>
       </div>
     </footer>
     <WhatsAppBubble />

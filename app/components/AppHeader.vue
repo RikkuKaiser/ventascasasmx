@@ -9,6 +9,7 @@ const route = useRoute()
 const links = [
   { to: '/', label: 'Inicio' },
   { to: '/inmuebles', label: 'Inmuebles' },
+  { to: '/broker', label: 'Para asesores' },
 ]
 
 function isActive(path: string) {

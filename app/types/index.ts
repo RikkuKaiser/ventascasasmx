@@ -66,3 +66,17 @@ export interface Usuario {
   email: string
   passwordHash: string
 }
+
+/** Solicitud de colaboración como asesor externo (formulario /asesores) */
+export interface SolicitudAsesor {
+  id: string
+  nombreCompleto: string
+  email: string
+  telefono: string
+  ciudad: string
+  perfil: 'independiente' | 'inmobiliaria'
+  nombreInmobiliaria: string
+  experiencia: string
+  mensaje: string
+  creadoEn: string
+}
