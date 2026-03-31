@@ -1,9 +1,9 @@
 <template>
-  <section class="border-y border-white/5 bg-night-850/30 px-4 py-16 backdrop-blur-sm">
+  <section class="border-y border-white/5 bg-night-850/30 px-4 py-12 backdrop-blur-sm sm:py-14 md:py-16">
     <div class="mx-auto max-w-6xl">
-      <div class="grid gap-10 md:grid-cols-3">
+      <div class="grid gap-8 md:grid-cols-3 md:gap-10">
         <div class="text-center">
-          <p class="font-display text-4xl font-semibold text-gradient-royal md:text-5xl">
+          <p class="font-display text-3xl font-semibold text-gradient-royal sm:text-4xl md:text-5xl">
             +120
           </p>
           <p class="mt-2 text-sm font-medium uppercase tracking-wider text-royal-300">
@@ -14,7 +14,7 @@
           </p>
         </div>
         <div class="text-center">
-          <p class="font-display text-4xl font-semibold text-gradient-royal md:text-5xl">
+          <p class="font-display text-3xl font-semibold text-gradient-royal sm:text-4xl md:text-5xl">
             24/7
           </p>
           <p class="mt-2 text-sm font-medium uppercase tracking-wider text-royal-300">
@@ -25,7 +25,7 @@
           </p>
         </div>
         <div class="text-center">
-          <p class="font-display text-4xl font-semibold text-gradient-royal md:text-5xl">
+          <p class="font-display text-3xl font-semibold text-gradient-royal sm:text-4xl md:text-5xl">
             100%
           </p>
           <p class="mt-2 text-sm font-medium uppercase tracking-wider text-royal-300">
@@ -37,12 +37,12 @@
         </div>
       </div>
 
-      <div class="mt-16">
+      <div class="mt-10 sm:mt-14 md:mt-16">
         <div class="mx-auto max-w-3xl text-center md:mx-0 md:text-left">
           <p class="text-xs font-semibold uppercase tracking-widest text-royal-300">
             Nuestros servicios
           </p>
-          <h2 class="mt-2 font-display text-2xl font-semibold text-white md:text-3xl">
+          <h2 class="mt-2 font-display text-xl font-semibold leading-snug text-white sm:text-2xl md:text-3xl">
             Te acompañamos de la oferta a las llaves
           </h2>
           <p class="mt-3 text-sm leading-relaxed text-slate-400 md:max-w-xl">
@@ -51,9 +51,9 @@
           </p>
         </div>
 
-        <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="mt-8 grid gap-3 sm:mt-10 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
           <div
-            class="rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-md"
+            class="rounded-2xl border border-white/10 bg-white/[0.04] p-5 backdrop-blur-md sm:p-6"
           >
             <div class="mb-3 flex gap-2">
               <div
@@ -106,7 +106,7 @@
             </p>
           </div>
           <div
-            class="rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-md"
+            class="rounded-2xl border border-white/10 bg-white/[0.04] p-5 backdrop-blur-md sm:p-6"
           >
             <div
               class="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-royal-900/50 text-royal-200 ring-1 ring-royal-500/30"
@@ -135,7 +135,7 @@
             </p>
           </div>
           <div
-            class="rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-md"
+            class="rounded-2xl border border-white/10 bg-white/[0.04] p-5 backdrop-blur-md sm:p-6"
           >
             <div
               class="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-royal-900/50 text-royal-200 ring-1 ring-royal-500/30"

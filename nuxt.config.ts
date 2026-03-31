@@ -33,7 +33,11 @@ export default defineNuxtConfig({
       title: 'LuxeInmuebles — Anuncia con elegancia',
       htmlAttrs: { lang: 'es' },
       meta: [
-        { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+        {
+          name: 'viewport',
+          content:
+            'width=device-width, initial-scale=1, viewport-fit=cover',
+        },
         {
           name: 'description',
           content: 'Plataforma elegante para anunciar y descubrir inmuebles.',

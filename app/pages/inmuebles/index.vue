@@ -41,13 +41,13 @@ const filtrados = computed(() => {
 </script>
 
 <template>
-  <div class="px-4 py-12">
+  <div class="px-3 py-8 sm:px-4 sm:py-12">
     <div class="mx-auto max-w-6xl">
       <div class="max-w-2xl">
-        <h1 class="font-display text-4xl font-semibold text-white">
+        <h1 class="font-display text-3xl font-semibold text-white sm:text-4xl">
           Catálogo de inmuebles
         </h1>
-        <p class="mt-3 text-lg text-slate-400">
+        <p class="mt-3 text-base leading-relaxed text-slate-400 sm:text-lg">
           Filtra por ciudad, busca por palabras clave u ordena por precio para
           acercarte a lo que buscas.
         </p>

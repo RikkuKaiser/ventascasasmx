@@ -6,11 +6,11 @@ defineProps<{
 </script>
 
 <template>
-  <div class="px-4 py-12 md:py-16">
+  <div class="px-3 py-8 sm:px-4 sm:py-12 md:py-16">
     <article
-      class="mx-auto max-w-3xl rounded-2xl border border-white/10 bg-white/[0.04] p-8 shadow-glass backdrop-blur-md md:p-10"
+      class="mx-auto max-w-3xl rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-glass backdrop-blur-md sm:p-8 md:p-10"
     >
-      <h1 class="font-display text-3xl font-semibold text-white md:text-4xl">
+      <h1 class="font-display text-2xl font-semibold text-white sm:text-3xl md:text-4xl">
         {{ title }}
       </h1>
       <p v-if="descripcion" class="mt-2 text-sm text-slate-500">

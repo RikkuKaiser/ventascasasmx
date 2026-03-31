@@ -15,7 +15,9 @@
     <main class="relative z-10 flex-1">
       <slot />
     </main>
-    <footer class="relative z-10 mt-16 border-t border-white/5 py-10">
+    <footer
+      class="relative z-10 mt-12 border-t border-white/5 py-8 pb-[max(2rem,env(safe-area-inset-bottom))] sm:mt-16 sm:py-10 sm:pb-[max(2.5rem,env(safe-area-inset-bottom))]"
+    >
       <div
         class="mx-auto max-w-6xl px-4 text-center text-sm text-slate-500"
       >

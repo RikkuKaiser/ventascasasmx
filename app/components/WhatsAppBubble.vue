@@ -7,7 +7,7 @@ const waHref = computed(() => waUrlForText(defaultMessage.value))
 <template>
   <div
     v-if="waHref"
-    class="group fixed bottom-5 right-5 z-[60] sm:bottom-6 sm:right-6"
+    class="group fixed z-[60] [bottom:max(1.25rem,env(safe-area-inset-bottom))] [right:max(1.25rem,env(safe-area-inset-right))] sm:[bottom:max(1.5rem,env(safe-area-inset-bottom))] sm:[right:max(1.5rem,env(safe-area-inset-right))]"
   >
     <div
       class="pointer-events-none absolute bottom-[calc(100%+0.5rem)] right-0 hidden max-w-[220px] rounded-2xl border border-white/10 bg-night-850/95 px-3 py-2 text-right text-xs text-slate-300 opacity-0 shadow-lg backdrop-blur-md transition duration-200 group-hover:pointer-events-auto group-hover:opacity-100 sm:block"
