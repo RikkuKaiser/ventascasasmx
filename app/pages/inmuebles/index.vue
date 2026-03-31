@@ -71,7 +71,7 @@ const filtrados = computed(() => {
           <select
             id="ciudad"
             v-model="ciudad"
-            class="w-full rounded-xl border border-white/10 bg-night-850/80 px-4 py-2.5 text-sm text-white focus:border-royal-500/50 focus:outline-none focus:ring-2 focus:ring-royal-500/25"
+            class="select-theme"
           >
             <option value="">
               Todas
@@ -86,7 +86,7 @@ const filtrados = computed(() => {
           <select
             id="orden"
             v-model="orden"
-            class="w-full rounded-xl border border-white/10 bg-night-850/80 px-4 py-2.5 text-sm text-white focus:border-royal-500/50 focus:outline-none focus:ring-2 focus:ring-royal-500/25"
+            class="select-theme"
           >
             <option value="reciente">
               Destacados primero

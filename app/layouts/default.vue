@@ -23,5 +23,6 @@
         <p class="mt-1">Anuncia y descubre inmuebles con estilo.</p>
       </div>
     </footer>
+    <WhatsAppBubble />
   </div>
 </template>

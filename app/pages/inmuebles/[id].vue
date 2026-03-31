@@ -63,7 +63,10 @@ useHead(() => ({
             class="mt-6 flex flex-col gap-4 border-t border-white/10 pt-6 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between"
           >
             <CompartirInmueble :titulo="inmueble.titulo" />
-            <FavoritoBoton :inmueble-id="inmueble.id" variante="inline" />
+            <div class="flex flex-wrap items-center gap-3">
+              <WhatsAppInmuebleCta variante="card" :inmueble="inmueble" />
+              <FavoritoBoton :inmueble-id="inmueble.id" variante="inline" />
+            </div>
           </div>
         </div>
       </div>
@@ -107,7 +110,8 @@ useHead(() => ({
           <div
             class="rounded-2xl border border-royal-500/25 bg-royal-950/40 p-6 backdrop-blur-xl"
           >
-            <p class="text-sm text-royal-100">
+            <WhatsAppInmuebleCta variante="aside" :inmueble="inmueble" />
+            <p class="mt-4 text-sm text-royal-100">
               ¿Te interesa este inmueble? Los comentarios públicos ayudan a la
               comunidad; regístrate para participar.
             </p>
@@ -130,11 +134,12 @@ useHead(() => ({
       <div
         class="fixed bottom-0 left-0 right-0 z-40 border-t border-white/10 bg-night-900/92 px-4 py-3 backdrop-blur-xl md:hidden"
       >
-        <div class="mx-auto flex max-w-lg items-center justify-center gap-3">
+        <div class="mx-auto flex max-w-lg items-center justify-center gap-2">
           <FavoritoBoton :inmueble-id="inmueble.id" variante="inline" />
+          <WhatsAppInmuebleCta variante="bar" :inmueble="inmueble" />
           <NuxtLink
             to="#comentarios"
-            class="rounded-xl bg-gradient-to-r from-royal-600 to-royal-800 px-5 py-2.5 text-sm font-semibold text-white shadow-royal"
+            class="shrink-0 rounded-xl bg-gradient-to-r from-royal-600 to-royal-800 px-4 py-2.5 text-sm font-semibold text-white shadow-royal"
           >
             Comentar
           </NuxtLink>

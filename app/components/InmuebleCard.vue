@@ -144,16 +144,33 @@ watch(
             <span>{{ inmueble.banos }} baños</span>
           </span>
         </div>
-        <div class="mt-4 flex items-center justify-between gap-3">
+        <div class="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
           <p class="font-display text-lg font-semibold text-gradient-royal">
             {{ store.formatearPrecio(inmueble) }}
           </p>
-          <NuxtLink
-            :to="`/inmuebles/${inmueble.id}`"
-            class="shrink-0 rounded-xl bg-white/10 px-4 py-2 text-sm font-medium text-white ring-1 ring-white/15 transition hover:bg-royal-600/80 hover:ring-royal-400/50"
-          >
-            Ver detalle
-          </NuxtLink>
+          <div class="flex flex-wrap items-center justify-end gap-2">
+            <WhatsAppInmuebleCta variante="card" :inmueble="inmueble" />
+            <NuxtLink
+              :to="`/inmuebles/${inmueble.id}`"
+              class="inline-flex h-8 shrink-0 items-center gap-1 rounded-lg bg-gradient-to-r from-royal-600 to-royal-800 px-3 text-sm font-semibold text-white shadow-royal ring-1 ring-white/20 transition hover:brightness-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-night-950"
+            >
+              Ver detalle
+              <svg
+                class="h-3.5 w-3.5 opacity-90"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </NuxtLink>
+          </div>
         </div>
       </div>
     </div>
