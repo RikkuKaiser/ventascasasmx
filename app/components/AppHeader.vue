@@ -9,12 +9,18 @@ const route = useRoute()
 const links = [
   { to: '/', label: 'Inicio' },
   { to: '/inmuebles', label: 'Inmuebles' },
+  { to: '/publicar', label: 'Publicar' },
   { to: '/broker', label: 'Para asesores' },
 ]
 
 function isActive(path: string) {
   if (path === '/') return route.path === '/'
   return route.path.startsWith(path)
+}
+
+function salir() {
+  favoritos.alCerrarSesion()
+  auth.cerrarSesion()
 }
 </script>
 
@@ -83,7 +89,7 @@ function isActive(path: string) {
           <button
             type="button"
             class="rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-sm text-slate-200 transition hover:bg-white/10"
-            @click="auth.cerrarSesion()"
+            @click="salir()"
           >
             Salir
           </button>

@@ -11,13 +11,21 @@ const error = ref('')
 
 const lista = computed(() => comentarios.porInmueble(props.inmuebleId))
 
-function enviar() {
+watch(
+  () => props.inmuebleId,
+  (id) => {
+    comentarios.cargarInmueble(id)
+  },
+  { immediate: true },
+)
+
+async function enviar() {
   error.value = ''
   if (!auth.sesion) {
     error.value = 'Inicia sesión para comentar.'
     return
   }
-  const r = comentarios.agregar(
+  const r = await comentarios.agregar(
     props.inmuebleId,
     auth.sesion.id,
     auth.sesion.nombre,

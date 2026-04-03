@@ -1,28 +1,41 @@
 <script setup lang="ts">
 import { useAuthStore } from '~/stores/auth'
+import { useFavoritosStore } from '~/stores/favoritos'
 
 useHead({ title: 'Registro — LuxeInmuebles' })
 
 const auth = useAuthStore()
 const router = useRouter()
+const route = useRoute()
 const nombre = ref('')
 const email = ref('')
 const password = ref('')
 const aceptoLegales = ref(false)
 const error = ref('')
 
-function submit() {
+async function submit() {
   error.value = ''
   if (!aceptoLegales.value) {
     error.value = 'Debes aceptar los Términos y el Aviso de privacidad.'
     return
   }
-  const r = auth.registrar(nombre.value, email.value, password.value)
+  const r = await auth.registrar(nombre.value, email.value, password.value)
   if (!r.ok) {
     error.value = r.error
     return
   }
-  router.push('/inmuebles')
+  const favoritos = useFavoritosStore()
+  await favoritos.sincronizarDesdeApi()
+  const redir = route.query.redirect
+  if (
+    typeof redir === 'string'
+    && redir.startsWith('/')
+    && !redir.startsWith('//')
+  ) {
+    await router.push(redir)
+    return
+  }
+  await router.push('/inmuebles')
 }
 </script>
 
@@ -74,7 +87,8 @@ function submit() {
           <input
             v-model="aceptoLegales"
             type="checkbox"
-            class="mt-1 rounded border-white/20 bg-night-850 text-royal-600 focus:ring-royal-500/40"
+            required
+            class="checkbox-glass"
           />
           <span>
             He leído y acepto los
@@ -101,7 +115,10 @@ function submit() {
       </form>
       <p class="mt-6 text-center text-sm text-slate-500">
         ¿Ya tienes cuenta?
-        <NuxtLink to="/login" class="font-medium text-royal-300 hover:text-white">Entrar</NuxtLink>
+        <NuxtLink
+          :to="{ path: '/login', query: route.query }"
+          class="font-medium text-royal-300 hover:text-white"
+        >Entrar</NuxtLink>
       </p>
     </div>
   </div>

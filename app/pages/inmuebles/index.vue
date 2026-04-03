@@ -14,6 +14,17 @@ const ciudades = computed(() => {
   return [...set].sort((a, b) => a.localeCompare(b, 'es'))
 })
 
+const ciudadOptions = computed(() => [
+  { value: '', label: 'Todas' },
+  ...ciudades.value.map((c) => ({ value: c, label: c })),
+])
+
+const ordenOptions = [
+  { value: 'reciente', label: 'Destacados primero' },
+  { value: 'precio-asc', label: 'Precio: menor a mayor' },
+  { value: 'precio-desc', label: 'Precio: mayor a menor' },
+] as const
+
 const filtrados = computed(() => {
   let L: Inmueble[] = [...inmuebles.lista]
   const q = busqueda.value.trim().toLowerCase()
@@ -68,36 +79,20 @@ const filtrados = computed(() => {
         </div>
         <div class="w-full sm:w-48">
           <label class="mb-1.5 block text-xs font-medium text-slate-500" for="ciudad">Ciudad</label>
-          <select
+          <GlassSelect
             id="ciudad"
             v-model="ciudad"
-            class="select-theme"
-          >
-            <option value="">
-              Todas
-            </option>
-            <option v-for="c in ciudades" :key="c" :value="c">
-              {{ c }}
-            </option>
-          </select>
+            :options="ciudadOptions"
+            placeholder="Todas"
+          />
         </div>
         <div class="w-full sm:w-52">
           <label class="mb-1.5 block text-xs font-medium text-slate-500" for="orden">Orden</label>
-          <select
+          <GlassSelect
             id="orden"
             v-model="orden"
-            class="select-theme"
-          >
-            <option value="reciente">
-              Destacados primero
-            </option>
-            <option value="precio-asc">
-              Precio: menor a mayor
-            </option>
-            <option value="precio-desc">
-              Precio: mayor a menor
-            </option>
-          </select>
+            :options="ordenOptions"
+          />
         </div>
         <p class="w-full text-sm text-slate-500 sm:ml-auto sm:w-auto sm:self-center sm:pt-5">
           {{ filtrados.length }} resultado{{ filtrados.length === 1 ? '' : 's' }}

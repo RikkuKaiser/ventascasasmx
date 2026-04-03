@@ -4,6 +4,11 @@ import { useFavoritosStore } from '~/stores/favoritos'
 
 const auth = useAuthStore()
 const favoritos = useFavoritosStore()
+
+function salir() {
+  favoritos.alCerrarSesion()
+  auth.cerrarSesion()
+}
 </script>
 
 <template>
@@ -54,6 +59,10 @@ const favoritos = useFavoritosStore()
             Inmuebles
           </NuxtLink>
           <span class="text-slate-700" aria-hidden="true">·</span>
+          <NuxtLink to="/publicar" class="transition hover:text-royal-300">
+            Publicar
+          </NuxtLink>
+          <span class="text-slate-700" aria-hidden="true">·</span>
           <NuxtLink to="/favoritos" class="transition hover:text-royal-300">
             Favoritos
             <template v-if="favoritos.cantidad > 0">
@@ -69,7 +78,7 @@ const favoritos = useFavoritosStore()
             <button
               type="button"
               class="transition hover:text-royal-300"
-              @click="auth.cerrarSesion()"
+              @click="salir()"
             >
               Salir
             </button>

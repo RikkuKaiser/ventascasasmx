@@ -1,5 +1,6 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
+import { useAuthStore } from '~/stores/auth'
 
 const STORAGE = 'luxeinmuebles_favoritos'
 
@@ -21,7 +22,40 @@ export const useFavoritosStore = defineStore('favoritos', () => {
     localStorage.setItem(STORAGE, JSON.stringify(ids.value))
   }
 
-  function alternar(id: string) {
+  async function sincronizarDesdeApi() {
+    const base = useApiBase()
+    const auth = useAuthStore()
+    if (!base || !auth.sesion?.accessToken) return
+    try {
+      const res = await $fetch<{ ids: string[] }>(`${base}/favoritos`, {
+        headers: { Authorization: `Bearer ${auth.sesion.accessToken}` },
+      })
+      ids.value = res.ids
+      guardar()
+    } catch {
+      /* ignore */
+    }
+  }
+
+  async function alternar(id: string) {
+    const base = useApiBase()
+    const auth = useAuthStore()
+    if (base && auth.sesion?.accessToken) {
+      try {
+        const res = await $fetch<{ ids: string[]; esFavorito: boolean }>(
+          `${base}/favoritos/${id}/toggle`,
+          {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${auth.sesion.accessToken}` },
+          },
+        )
+        ids.value = res.ids
+        guardar()
+        return
+      } catch {
+        /* fallback local */
+      }
+    }
     const i = ids.value.indexOf(id)
     if (i >= 0) ids.value.splice(i, 1)
     else ids.value.push(id)
@@ -34,5 +68,21 @@ export const useFavoritosStore = defineStore('favoritos', () => {
 
   const cantidad = computed(() => ids.value.length)
 
-  return { ids, cantidad, cargar, guardar, alternar, tiene }
+  /** Con API, los favoritos son por usuario; al cerrar sesión no deben quedar en UI. */
+  function alCerrarSesion() {
+    if (!useApiBase()) return
+    ids.value = []
+    guardar()
+  }
+
+  return {
+    ids,
+    cantidad,
+    cargar,
+    guardar,
+    sincronizarDesdeApi,
+    alternar,
+    tiene,
+    alCerrarSesion,
+  }
 })

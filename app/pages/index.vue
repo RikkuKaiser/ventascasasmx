@@ -23,12 +23,20 @@ useHead({ title: 'Inicio — LuxeInmuebles' })
               propiedad se sienta exclusiva.
             </p>
           </div>
-          <NuxtLink
-            to="/inmuebles"
-            class="text-sm font-medium text-royal-300 hover:text-white"
-          >
-            Ver todos →
-          </NuxtLink>
+          <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <NuxtLink
+              to="/publicar"
+              class="text-sm font-medium text-slate-300 hover:text-white"
+            >
+              Publicar inmueble
+            </NuxtLink>
+            <NuxtLink
+              to="/inmuebles"
+              class="text-sm font-medium text-royal-300 hover:text-white"
+            >
+              Ver todos →
+            </NuxtLink>
+          </div>
         </div>
         <div
           class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3"

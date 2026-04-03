@@ -14,10 +14,10 @@ const favoritos = useFavoritosStore()
 
 const activo = computed(() => favoritos.tiene(props.inmuebleId))
 
-function click(e: MouseEvent) {
+async function click(e: MouseEvent) {
   e.preventDefault()
   e.stopPropagation()
-  favoritos.alternar(props.inmuebleId)
+  await favoritos.alternar(props.inmuebleId)
 }
 </script>
 

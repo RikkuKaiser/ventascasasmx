@@ -22,7 +22,7 @@ export const useSolicitudesAsesorStore = defineStore('solicitudesAsesor', () => 
     localStorage.setItem(STORAGE, JSON.stringify(items.value))
   }
 
-  function agregar(datos: {
+  async function agregar(datos: {
     nombreCompleto: string
     email: string
     telefono: string
@@ -54,6 +54,32 @@ export const useSolicitudesAsesorStore = defineStore('solicitudesAsesor', () => 
         error: 'Indica el nombre de la inmobiliaria.',
       }
 
+    const base = useApiBase()
+    if (base) {
+      try {
+        await $fetch(`${base}/solicitudes-asesor`, {
+          method: 'POST',
+          body: {
+            nombreCompleto,
+            email,
+            telefono,
+            ciudad,
+            perfil: datos.perfil,
+            nombreInmobiliaria:
+              datos.perfil === 'inmobiliaria' ? nombreInmobiliaria : '',
+            experiencia: datos.experiencia,
+            mensaje,
+          },
+        })
+        return { ok: true as const }
+      } catch {
+        return {
+          ok: false as const,
+          error: 'No se pudo enviar la solicitud. Intenta más tarde.',
+        }
+      }
+    }
+
     const s: SolicitudAsesor = {
       id: crypto.randomUUID(),
       nombreCompleto,
@@ -61,7 +87,8 @@ export const useSolicitudesAsesorStore = defineStore('solicitudesAsesor', () => 
       telefono,
       ciudad,
       perfil: datos.perfil,
-      nombreInmobiliaria: datos.perfil === 'inmobiliaria' ? nombreInmobiliaria : '',
+      nombreInmobiliaria:
+        datos.perfil === 'inmobiliaria' ? nombreInmobiliaria : '',
       experiencia: datos.experiencia,
       mensaje,
       creadoEn: new Date().toISOString(),

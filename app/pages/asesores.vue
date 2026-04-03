@@ -25,6 +25,19 @@ onMounted(() => {
 const inputClass =
   'w-full rounded-xl border border-white/10 bg-night-850/80 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:border-royal-500/50 focus:outline-none focus:ring-2 focus:ring-royal-500/30'
 
+const perfilOptions = [
+  { value: 'independiente', label: 'Asesor independiente' },
+  { value: 'inmobiliaria', label: 'Inmobiliaria / equipo' },
+]
+
+const experienciaOptions = [
+  { value: '', label: 'Prefiero no indicar' },
+  { value: 'formacion', label: 'En formación / primer año' },
+  { value: '1-2', label: '1 a 2 años' },
+  { value: '3-5', label: '3 a 5 años' },
+  { value: '5+', label: 'Más de 5 años' },
+]
+
 function resetCampos() {
   nombreCompleto.value = ''
   email.value = ''
@@ -37,14 +50,14 @@ function resetCampos() {
   acepto.value = false
 }
 
-function submit() {
+async function submit() {
   error.value = ''
   if (!acepto.value) {
     error.value
       = 'Debes aceptar el tratamiento de datos según el Aviso de privacidad y los Términos.'
     return
   }
-  const r = solicitudes.agregar({
+  const r = await solicitudes.agregar({
     nombreCompleto: nombreCompleto.value,
     email: email.value,
     telefono: telefono.value,
@@ -168,18 +181,12 @@ function submit() {
           <label class="mb-1.5 block text-xs font-medium text-slate-400" for="as-perfil">
             Perfil
           </label>
-          <select
+          <GlassSelect
             id="as-perfil"
             v-model="perfil"
-            class="select-theme w-full border-white/10 bg-night-850/80"
-          >
-            <option value="independiente">
-              Asesor independiente
-            </option>
-            <option value="inmobiliaria">
-              Inmobiliaria / equipo
-            </option>
-          </select>
+            :options="perfilOptions"
+            comfortable
+          />
         </div>
         <div v-if="perfil === 'inmobiliaria'">
           <label class="mb-1.5 block text-xs font-medium text-slate-400" for="as-inmo">
@@ -196,27 +203,12 @@ function submit() {
           <label class="mb-1.5 block text-xs font-medium text-slate-400" for="as-exp">
             Experiencia en el sector
           </label>
-          <select
+          <GlassSelect
             id="as-exp"
             v-model="experiencia"
-            class="select-theme w-full border-white/10 bg-night-850/80"
-          >
-            <option value="">
-              Prefiero no indicar
-            </option>
-            <option value="formacion">
-              En formación / primer año
-            </option>
-            <option value="1-2">
-              1 a 2 años
-            </option>
-            <option value="3-5">
-              3 a 5 años
-            </option>
-            <option value="5+">
-              Más de 5 años
-            </option>
-          </select>
+            :options="experienciaOptions"
+            comfortable
+          />
         </div>
         <div>
           <label class="mb-1.5 block text-xs font-medium text-slate-400" for="as-msg">
@@ -235,7 +227,8 @@ function submit() {
           <input
             v-model="acepto"
             type="checkbox"
-            class="mt-1 rounded border-white/20 bg-night-850 text-royal-600 focus:ring-royal-500/40"
+            required
+            class="checkbox-glass"
           />
           <span>
             Acepto el tratamiento de mis datos conforme al

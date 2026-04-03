@@ -1,6 +1,7 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import type { Inmueble } from '~/types'
+import { useAuthStore } from '~/stores/auth'
 
 const demo: Inmueble[] = [
   {
@@ -333,6 +334,17 @@ export const useInmueblesStore = defineStore('inmuebles', () => {
 
   const destacados = computed(() => lista.value.filter((i) => i.destacado))
 
+  async function sincronizarDesdeApi() {
+    const base = useApiBase()
+    if (!base) return
+    try {
+      const data = await $fetch<Inmueble[]>(`${base}/inmuebles`)
+      lista.value = data
+    } catch {
+      /* conservar demo si el API no está disponible */
+    }
+  }
+
   function porId(id: string) {
     return lista.value.find((i) => i.id === id)
   }
@@ -358,9 +370,47 @@ export const useInmueblesStore = defineStore('inmuebles', () => {
     }).format(c)} / mes`
   }
 
+  /** Cuerpo sin `id`, alineado con el API y el tipo `Inmueble`. */
+  async function publicarInmueble(
+    cuerpo: Omit<Inmueble, 'id'>,
+  ): Promise<{ ok: true; id: string } | { ok: false; error: string }> {
+    const auth = useAuthStore()
+    if (!auth.sesion)
+      return { ok: false, error: 'Inicia sesión para publicar un inmueble.' }
+    const base = useApiBase()
+    if (base) {
+      if (!auth.sesion.accessToken) {
+        return {
+          ok: false,
+          error: 'Tu sesión no es válida para el servidor. Vuelve a entrar.',
+        }
+      }
+      try {
+        const created = await $fetch<Inmueble>(`${base}/inmuebles`, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${auth.sesion.accessToken}` },
+          body: cuerpo,
+        })
+        await sincronizarDesdeApi()
+        return { ok: true, id: created.id }
+      } catch {
+        return {
+          ok: false,
+          error:
+            'No se pudo publicar. Revisa los datos, tu conexión o vuelve a iniciar sesión.',
+        }
+      }
+    }
+    const id = crypto.randomUUID()
+    lista.value = [{ ...cuerpo, id }, ...lista.value]
+    return { ok: true, id }
+  }
+
   return {
     lista,
     destacados,
+    sincronizarDesdeApi,
+    publicarInmueble,
     porId,
     formatearPrecio,
     formatearCuotaMantenimiento,

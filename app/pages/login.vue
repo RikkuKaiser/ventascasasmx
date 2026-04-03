@@ -1,22 +1,36 @@
 <script setup lang="ts">
 import { useAuthStore } from '~/stores/auth'
+import { useFavoritosStore } from '~/stores/favoritos'
 
 useHead({ title: 'Entrar — LuxeInmuebles' })
 
 const auth = useAuthStore()
 const router = useRouter()
+const route = useRoute()
 const email = ref('')
 const password = ref('')
 const error = ref('')
+const sinApi = computed(() => !useApiBase())
 
-function submit() {
+async function submit() {
   error.value = ''
-  const r = auth.iniciarSesion(email.value, password.value)
+  const r = await auth.iniciarSesion(email.value, password.value)
   if (!r.ok) {
     error.value = r.error
     return
   }
-  router.push('/inmuebles')
+  const favoritos = useFavoritosStore()
+  await favoritos.sincronizarDesdeApi()
+  const redir = route.query.redirect
+  if (
+    typeof redir === 'string'
+    && redir.startsWith('/')
+    && !redir.startsWith('//')
+  ) {
+    await router.push(redir)
+    return
+  }
+  await router.push('/inmuebles')
 }
 </script>
 
@@ -28,6 +42,16 @@ function submit() {
       </h1>
       <p class="mt-2 text-center text-sm text-slate-400">
         Accede para comentar y seguir tus inmuebles favoritos.
+      </p>
+      <p
+        v-if="sinApi"
+        class="mt-4 rounded-xl border border-amber-500/35 bg-amber-950/35 px-4 py-3 text-center text-xs text-amber-100/95"
+      >
+        No hay API configurada: el login solo usa cuentas creadas en este
+        navegador. Para entrar con usuarios de la base de datos, define
+        <code class="rounded bg-night-900/80 px-1 py-0.5 text-[10px] text-amber-50">NUXT_PUBLIC_API_BASE</code>
+        (ej. <code class="text-[10px]">http://localhost:3001/api</code>) en
+        <code class="text-[10px]">.env</code> y reinicia <code class="text-[10px]">nuxt dev</code>.
       </p>
       <form class="mt-8 space-y-4" @submit.prevent="submit">
         <div>
@@ -62,7 +86,10 @@ function submit() {
       </form>
       <p class="mt-6 text-center text-sm text-slate-500">
         ¿No tienes cuenta?
-        <NuxtLink to="/registro" class="font-medium text-royal-300 hover:text-white">Regístrate</NuxtLink>
+        <NuxtLink
+          :to="{ path: '/registro', query: route.query }"
+          class="font-medium text-royal-300 hover:text-white"
+        >Regístrate</NuxtLink>
       </p>
     </div>
   </div>

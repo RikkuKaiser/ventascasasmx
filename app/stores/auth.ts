@@ -12,7 +12,9 @@ function simpleHash(s: string): string {
   return String(h)
 }
 
-export type SesionUsuario = Omit<Usuario, 'passwordHash'>
+export type SesionUsuario = Omit<Usuario, 'passwordHash'> & {
+  accessToken?: string
+}
 
 export const useAuthStore = defineStore('auth', () => {
   const usuarios = ref<Usuario[]>([])
@@ -44,8 +46,43 @@ export const useAuthStore = defineStore('auth', () => {
     else localStorage.removeItem(STORAGE_SESSION)
   }
 
-  function registrar(nombre: string, email: string, password: string) {
+  async function registrar(nombre: string, email: string, password: string) {
+    const base = useApiBase()
     const emailNorm = email.trim().toLowerCase()
+    if (base) {
+      try {
+        const res = await $fetch<{
+          accessToken: string
+          user: { id: string; nombre: string; email: string }
+        }>(`${base}/auth/register`, {
+          method: 'POST',
+          body: {
+            nombre: nombre.trim(),
+            email: emailNorm,
+            password,
+          },
+        })
+        sesion.value = {
+          id: res.user.id,
+          nombre: res.user.nombre,
+          email: res.user.email,
+          accessToken: res.accessToken,
+        }
+        guardarSesion()
+        return { ok: true as const }
+      } catch (e: unknown) {
+        const status =
+          typeof e === 'object' && e !== null && 'status' in e
+            ? Number((e as { status: number }).status)
+            : 0
+        if (status === 409)
+          return { ok: false as const, error: 'Ese correo ya está registrado.' }
+        return {
+          ok: false as const,
+          error: extractApiMessage(e, 'No se pudo completar el registro.'),
+        }
+      }
+    }
     if (usuarios.value.some((u) => u.email === emailNorm))
       return { ok: false as const, error: 'Ese correo ya está registrado.' }
     const user: Usuario = {
@@ -65,8 +102,30 @@ export const useAuthStore = defineStore('auth', () => {
     return { ok: true as const }
   }
 
-  function iniciarSesion(email: string, password: string) {
+  async function iniciarSesion(email: string, password: string) {
+    const base = useApiBase()
     const emailNorm = email.trim().toLowerCase()
+    if (base) {
+      try {
+        const res = await $fetch<{
+          accessToken: string
+          user: { id: string; nombre: string; email: string }
+        }>(`${base}/auth/login`, {
+          method: 'POST',
+          body: { email: emailNorm, password },
+        })
+        sesion.value = {
+          id: res.user.id,
+          nombre: res.user.nombre,
+          email: res.user.email,
+          accessToken: res.accessToken,
+        }
+        guardarSesion()
+        return { ok: true as const }
+      } catch {
+        return { ok: false as const, error: 'Correo o contraseña incorrectos.' }
+      }
+    }
     const user = usuarios.value.find((u) => u.email === emailNorm)
     if (!user || user.passwordHash !== simpleHash(password))
       return { ok: false as const, error: 'Correo o contraseña incorrectos.' }
@@ -93,3 +152,13 @@ export const useAuthStore = defineStore('auth', () => {
     cerrarSesion,
   }
 })
+
+function extractApiMessage(e: unknown, fallback: string): string {
+  if (e && typeof e === 'object' && 'data' in e) {
+    const d = (e as { data?: { message?: string | string[] } }).data
+    const m = d?.message
+    if (Array.isArray(m)) return m.join(' ')
+    if (typeof m === 'string') return m
+  }
+  return fallback
+}

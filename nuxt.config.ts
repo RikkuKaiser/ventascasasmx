@@ -4,6 +4,8 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   runtimeConfig: {
     public: {
+      /** Backend Nest: http://localhost:3001/api (vacío = solo datos locales) */
+      apiBase: process.env.NUXT_PUBLIC_API_BASE || '',
       // Solo dígitos internacionales (ej. México celular: 521 + 10 dígitos). Ver NUXT_PUBLIC_WHATSAPP_PHONE
       whatsappPhone: process.env.NUXT_PUBLIC_WHATSAPP_PHONE || '',
       whatsappDefaultMessage:
