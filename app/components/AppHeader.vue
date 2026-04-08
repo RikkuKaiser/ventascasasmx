@@ -10,11 +10,14 @@ const links = [
   { to: '/', label: 'Inicio' },
   { to: '/inmuebles', label: 'Inmuebles' },
   { to: '/publicar', label: 'Publicar' },
+  { to: '/publicar-terrenos', label: 'Terrenos' },
   { to: '/broker', label: 'Para asesores' },
 ]
 
 function isActive(path: string) {
   if (path === '/') return route.path === '/'
+  /** Evita que "Publicar" quede activo en `/publicar-terrenos`. */
+  if (path === '/publicar') return route.path === '/publicar'
   return route.path.startsWith(path)
 }
 

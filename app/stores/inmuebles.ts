@@ -5,7 +5,7 @@ import { useAuthStore } from '~/stores/auth'
 
 const demo: Inmueble[] = [
   {
-    id: '1',
+    id: 1,
     titulo: 'Penthouse con vista panorámica',
     descripcion:
       'Terraza privada, acabados de lujo y domótica. Ubicación premium con luz natural todo el día.',
@@ -44,7 +44,7 @@ const demo: Inmueble[] = [
     ],
   },
   {
-    id: '2',
+    id: 2,
     titulo: 'Residencia minimalista en bosque',
     descripcion:
       'Arquitectura contemporánea, amplios ventanales y jardín integrado. Ideal para quien busca calma.',
@@ -81,7 +81,7 @@ const demo: Inmueble[] = [
     ],
   },
   {
-    id: '3',
+    id: 3,
     titulo: 'Loft industrial reformado',
     descripcion:
       'Techos altos, acero y madera recuperada. Espacio diáfano perfecto para estudio o vivienda.',
@@ -115,7 +115,7 @@ const demo: Inmueble[] = [
     ],
   },
   {
-    id: '4',
+    id: 4,
     titulo: 'Casa mediterránea frente al mar',
     descripcion:
       'Acceso a playa, alberca infinita y muelle privado. Experiencia resort en tu hogar.',
@@ -152,7 +152,7 @@ const demo: Inmueble[] = [
     ],
   },
   {
-    id: '5',
+    id: 5,
     titulo: 'Departamento boutique en centro histórico',
     descripcion:
       'Fachada restaurada, interior contemporáneo. A pasos de cultura y gastronomía.',
@@ -187,7 +187,7 @@ const demo: Inmueble[] = [
     ],
   },
   {
-    id: '6',
+    id: 6,
     titulo: 'Villa con viñedo',
     descripcion:
       'Parcela amplia, bodega de vinos y vistas al valle. Para una vida sin prisas.',
@@ -223,7 +223,7 @@ const demo: Inmueble[] = [
     ],
   },
   {
-    id: '7',
+    id: 7,
     titulo: 'Torre residencial con amenidades de hotel y vista urbana',
     descripcion:
       'Ubicación estratégica a minutos de corporativos y zona gastronómica. El desarrollo incluye lobby con doble altura, gimnasio equipado, spa seco, alberca infinity en azotea, coworking privado y estacionamiento techado con acceso controlado. El interior combina pisos de mármol en áreas sociales, carpintería oculta en closets, iluminación escénica LED y preparación para domótica. Ideal para quien busca invertir en renta premium o habitar con servicios tipo concierge sin renunciar a la privacidad de un hogar propio.',
@@ -262,7 +262,7 @@ const demo: Inmueble[] = [
     ],
   },
   {
-    id: '8',
+    id: 8,
     titulo: 'Terreno habitacional en esquina',
     descripcion:
       'Polígono regular, servicios en banqueta y uso de suelo habitacional. Listo para proyecto residencial o dúplex.',
@@ -294,7 +294,7 @@ const demo: Inmueble[] = [
     ],
   },
   {
-    id: '9',
+    id: 9,
     titulo: 'Dúplex con roof garden privado',
     descripcion:
       'Dos niveles independientes en condominio cerrado. Roof garden con asador y excelente iluminación.',
@@ -345,8 +345,9 @@ export const useInmueblesStore = defineStore('inmuebles', () => {
     }
   }
 
-  function porId(id: string) {
-    return lista.value.find((i) => i.id === id)
+  function porId(id: string | number) {
+    const s = String(id)
+    return lista.value.find((i) => String(i.id) === s)
   }
 
   function formatearPrecio(i: Inmueble) {
@@ -373,6 +374,7 @@ export const useInmueblesStore = defineStore('inmuebles', () => {
   /** Cuerpo sin `id`, alineado con el API y el tipo `Inmueble`. */
   async function publicarInmueble(
     cuerpo: Omit<Inmueble, 'id'>,
+    archivos?: { principal?: File | null; galeria?: File[] },
   ): Promise<{ ok: true; id: string } | { ok: false; error: string }> {
     const auth = useAuthStore()
     if (!auth.sesion)
@@ -385,14 +387,36 @@ export const useInmueblesStore = defineStore('inmuebles', () => {
           error: 'Tu sesión no es válida para el servidor. Vuelve a entrar.',
         }
       }
+      const useMultipart = !!(
+        archivos?.principal
+        || (archivos?.galeria && archivos.galeria.length > 0)
+      )
       try {
-        const created = await $fetch<Inmueble>(`${base}/inmuebles`, {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${auth.sesion.accessToken}` },
-          body: cuerpo,
-        })
+        let created: Inmueble
+        if (useMultipart) {
+          const fd = new FormData()
+          const payload = { ...cuerpo } as Record<string, unknown>
+          if (archivos?.principal)
+            delete payload.imagen
+          fd.append('data', JSON.stringify(payload))
+          if (archivos?.principal)
+            fd.append('principal', archivos.principal)
+          archivos?.galeria?.forEach((f) => fd.append('galeria', f))
+          created = await $fetch<Inmueble>(`${base}/inmuebles/con-fotos`, {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${auth.sesion.accessToken}` },
+            body: fd,
+          })
+        }
+        else {
+          created = await $fetch<Inmueble>(`${base}/inmuebles`, {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${auth.sesion.accessToken}` },
+            body: cuerpo,
+          })
+        }
         await sincronizarDesdeApi()
-        return { ok: true, id: created.id }
+        return { ok: true, id: String(created.id) }
       } catch {
         return {
           ok: false,
@@ -401,9 +425,10 @@ export const useInmueblesStore = defineStore('inmuebles', () => {
         }
       }
     }
-    const id = crypto.randomUUID()
-    lista.value = [{ ...cuerpo, id }, ...lista.value]
-    return { ok: true, id }
+    const nextId
+      = lista.value.reduce((m, i) => Math.max(m, Number(i.id) || 0), 0) + 1
+    lista.value = [{ ...cuerpo, id: nextId }, ...lista.value]
+    return { ok: true, id: String(nextId) }
   }
 
   return {

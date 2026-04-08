@@ -41,7 +41,11 @@
     background-size: 11px 17px;
   }
 
-  /* Reservado por si en algún sitio queda <select> nativo (Windows/Edge). Preferir <GlassSelect>. */
+  /*
+   * No usar <select> nativo en formularios: el estilo oficial es el componente
+   * `GlassSelect` (mismo aspecto que moneda/tipo en /publicar). `.select-theme`
+   * solo como último recurso fuera de Vue.
+   */
   .select-theme {
     @apply w-full cursor-pointer appearance-none rounded-xl border border-white/10 bg-night-850/80 px-4 py-2.5 pr-10 text-sm text-white;
     @apply focus:border-royal-500/50 focus:outline-none focus:ring-2 focus:ring-royal-500/25;

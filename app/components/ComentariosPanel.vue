@@ -2,7 +2,7 @@
 import { useAuthStore } from '~/stores/auth'
 import { useComentariosStore } from '~/stores/comentarios'
 
-const props = defineProps<{ inmuebleId: string }>()
+const props = defineProps<{ inmuebleId: string | number }>()
 
 const auth = useAuthStore()
 const comentarios = useComentariosStore()

@@ -23,23 +23,25 @@ export const useComentariosStore = defineStore('comentarios', () => {
     localStorage.setItem(STORAGE, JSON.stringify(items.value))
   }
 
-  async function cargarInmueble(inmuebleId: string) {
+  async function cargarInmueble(inmuebleId: string | number) {
     const base = useApiBase()
     if (!base) return
     try {
       const list = await $fetch<Comentario[]>(
-        `${base}/inmuebles/${inmuebleId}/comentarios`,
+        `${base}/inmuebles/${String(inmuebleId)}/comentarios`,
       )
-      items.value = items.value.filter((c) => c.inmuebleId !== inmuebleId)
+      items.value = items.value.filter(
+        (c) => String(c.inmuebleId) !== String(inmuebleId),
+      )
       items.value.push(...list)
     } catch {
       /* ignore */
     }
   }
 
-  function porInmueble(inmuebleId: string) {
+  function porInmueble(inmuebleId: string | number) {
     return items.value
-      .filter((c) => c.inmuebleId === inmuebleId)
+      .filter((c) => String(c.inmuebleId) === String(inmuebleId))
       .sort(
         (a, b) =>
           new Date(b.creadoEn).getTime() - new Date(a.creadoEn).getTime(),
@@ -47,7 +49,7 @@ export const useComentariosStore = defineStore('comentarios', () => {
   }
 
   async function agregar(
-    inmuebleId: string,
+    inmuebleId: string | number,
     userId: string,
     nombreUsuario: string,
     texto: string,
@@ -59,7 +61,7 @@ export const useComentariosStore = defineStore('comentarios', () => {
     if (base && auth.sesion?.accessToken) {
       try {
         const c = await $fetch<Comentario>(
-          `${base}/inmuebles/${inmuebleId}/comentarios`,
+          `${base}/inmuebles/${String(inmuebleId)}/comentarios`,
           {
             method: 'POST',
             headers: {
@@ -77,7 +79,7 @@ export const useComentariosStore = defineStore('comentarios', () => {
     }
     const c: Comentario = {
       id: crypto.randomUUID(),
-      inmuebleId,
+      inmuebleId: Number(inmuebleId),
       userId,
       nombreUsuario,
       texto: t,

@@ -15,8 +15,57 @@ export const TIPO_VIVIENDA_LABELS: Record<TipoVivienda, string> = {
   loft: 'Loft',
 }
 
+/** Servicios / infra en terreno campestre (JSON `terrenoCampestre.servicios`). */
+export interface TerrenoServiciosDetalle {
+  aguaPotable?: boolean
+  drenaje?: boolean
+  empedrado?: boolean
+  luz?: boolean
+  pavimentado?: boolean
+  rural?: boolean
+  planFinanciamiento?: boolean
+}
+
+/** Datos extendidos guardados en `terreno_campestre` (columna JSON en API). */
+export interface TerrenoCampestreDetalle {
+  operacion?: 'venta' | 'renta' | 'proyecto'
+  /** Código del select "Subtítulo de inmueble" en /publicar-terrenos */
+  subtipo?:
+    | 'terreno_comercial'
+    | 'terreno_campestre'
+    | 'terreno_playa'
+    | 'terreno_industrial'
+    | 'terreno_residencial'
+    | string
+  calleNumero?: string
+  loteCalle?: string
+  estado?: string
+  ciudadMunicipio?: string
+  colonia?: string
+  cp?: string
+  pais?: string
+  lat?: number
+  lng?: number
+  unidadSuperficie?: 'm2' | 'ha' | 'na'
+  manzana?: string
+  lotePredial?: string
+  estadoTerreno?: 'listo_construir' | 'obra_negra' | 'venta_como_terreno'
+  notas?: string
+  videoUrl?: string
+  planosUrl?: string
+  metrosFondo?: number
+  metrosFrente?: number
+  tipoRiego?: string
+  usoSuelo?: string
+  formaTerreno?: 'regular' | 'irregular' | 'plano'
+  casetaGuardia?: boolean
+  seguridadPrivada?: boolean
+  aptoCredito?: boolean
+  servicios?: TerrenoServiciosDetalle
+}
+
 export interface Inmueble {
-  id: string
+  id: number
   titulo: string
   descripcion: string
   precio: number
@@ -49,11 +98,13 @@ export interface Inmueble {
   amenidades: string[]
   /** Cuota de mantenimiento mensual en la moneda del inmueble; 0 si no aplica */
   cuotaMantenimiento: number
+  /** Presente si se publicó con el formulario de terreno campestre (u otro terreno extendido). */
+  terrenoCampestre?: TerrenoCampestreDetalle
 }
 
 export interface Comentario {
   id: string
-  inmuebleId: string
+  inmuebleId: number
   userId: string
   nombreUsuario: string
   texto: string

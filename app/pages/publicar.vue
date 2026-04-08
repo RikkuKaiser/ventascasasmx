@@ -32,6 +32,8 @@ const banos = ref<number | ''>('')
 const destacado = ref(false)
 const etiquetasTexto = ref('')
 const imagen = ref('')
+const archivoPrincipal = ref<File | null>(null)
+const archivosGaleria = ref<File[]>([])
 const galeriaTexto = ref('')
 const tipoVivienda = ref<TipoVivienda>('departamento')
 const estacionamientos = ref<number | ''>('')
@@ -129,6 +131,17 @@ function optInt(v: number | ''): number | undefined {
   return Number.isFinite(n) ? Math.trunc(n) : undefined
 }
 
+function onPrincipalFile(e: Event) {
+  const el = e.target as HTMLInputElement
+  archivoPrincipal.value = el.files?.[0] ?? null
+}
+
+function onGaleriaFiles(e: Event) {
+  const el = e.target as HTMLInputElement
+  const list = el.files
+  archivosGaleria.value = list ? Array.from(list) : []
+}
+
 async function submit() {
   error.value = ''
   if (!auth.sesion) {
@@ -139,8 +152,9 @@ async function submit() {
     error.value = 'Título y descripción son obligatorios.'
     return
   }
-  if (!imagen.value.trim()) {
-    error.value = 'Indica la URL de la imagen principal.'
+  if (!archivoPrincipal.value && !imagen.value.trim()) {
+    error.value =
+      'Sube una foto principal o indica la URL de la imagen principal.'
     return
   }
   const precioN = num(precio)
@@ -164,7 +178,7 @@ async function submit() {
       banos: Math.trunc(num(banos)),
       destacado: destacado.value,
       etiquetas: parseLineas(etiquetasTexto.value),
-      imagen: imagen.value.trim(),
+      imagen: archivoPrincipal.value ? '' : imagen.value.trim(),
       tipoVivienda: tipoVivienda.value,
       estacionamientos: Math.trunc(num(estacionamientos)),
       amenidades: parseLineas(amenidadesTexto.value),
@@ -179,7 +193,11 @@ async function submit() {
     const pe = optInt(pisosEdificio)
     if (pe != null) cuerpo.pisosEdificio = pe
 
-    const r = await inmuebles.publicarInmueble(cuerpo)
+    const r = await inmuebles.publicarInmueble(cuerpo, {
+      principal: archivoPrincipal.value,
+      galeria:
+        archivosGaleria.value.length > 0 ? archivosGaleria.value : undefined,
+    })
     if (!r.ok) {
       error.value = r.error
       return
@@ -214,6 +232,12 @@ async function submit() {
           >
             Cuatro pasos breves; al enviar, tu anuncio entra al catálogo.
           </p>
+          <NuxtLink
+            to="/publicar-terrenos"
+            class="mt-2 inline-flex text-xs font-medium text-royal-300 underline-offset-2 hover:underline md:mt-2"
+          >
+            ¿Vendes terreno? Formulario Terrenos →
+          </NuxtLink>
         </div>
         <NuxtLink
           to="/inmuebles"
@@ -669,21 +693,50 @@ async function submit() {
               <template v-else>
                 <div class="space-y-3">
                   <div>
+                    <label :class="labelClass" for="pub-file-principal"
+                      >Foto principal (archivo)</label
+                    >
+                    <input
+                      id="pub-file-principal"
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp,image/gif"
+                      class="block w-full cursor-pointer text-xs text-slate-400 file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-white/10 file:px-3 file:py-2 file:text-sm file:text-slate-200 hover:file:bg-white/15"
+                      @change="onPrincipalFile"
+                    />
+                    <p class="mt-1 text-[10px] text-slate-600">
+                      Con API y GCS configurado, se guarda en
+                      <code class="text-slate-500">inmuebles/&lt;id&gt;/principal…</code>
+                    </p>
+                  </div>
+                  <div>
+                    <label :class="labelClass" for="pub-file-gal"
+                      >Galería (archivos)</label
+                    >
+                    <input
+                      id="pub-file-gal"
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp,image/gif"
+                      multiple
+                      class="block w-full cursor-pointer text-xs text-slate-400 file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-white/10 file:px-3 file:py-2 file:text-sm file:text-slate-200 hover:file:bg-white/15"
+                      @change="onGaleriaFiles"
+                    />
+                  </div>
+                  <div>
                     <label :class="labelClass" for="pub-img"
-                      >URL imagen principal</label
+                      >O URL imagen principal</label
                     >
                     <input
                       id="pub-img"
                       v-model="imagen"
                       type="url"
-                      required
+                      :required="!archivoPrincipal"
                       :class="inputClass"
-                      placeholder="https://…"
+                      placeholder="https://… (si no subes archivo)"
                     />
                   </div>
                   <div>
                     <label :class="labelClass" for="pub-gal"
-                      >Galería (una URL por línea)</label
+                      >Galería (URLs, una por línea)</label
                     >
                     <textarea
                       id="pub-gal"

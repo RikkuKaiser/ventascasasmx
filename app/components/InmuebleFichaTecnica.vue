@@ -38,6 +38,64 @@ const ficha = computed(() => {
 })
 
 const esTerreno = computed(() => ficha.value.tipoVivienda === 'terreno')
+
+const tc = computed(() => ficha.value.terrenoCampestre)
+
+const etiquetaEstadoTerreno: Record<string, string> = {
+  listo_construir: 'Listo para construir',
+  obra_negra: 'Obra negra',
+  venta_como_terreno: 'Venta como terreno',
+}
+
+const etiquetaForma: Record<string, string> = {
+  regular: 'Regular',
+  irregular: 'Irregular',
+  plano: 'Plano',
+}
+
+const direccionExtendida = computed(() => {
+  const d = tc.value
+  if (!d) return null
+  const partes = [
+    d.calleNumero,
+    d.loteCalle ? `Lote ${d.loteCalle}` : '',
+    d.colonia,
+    d.ciudadMunicipio,
+    d.estado,
+    d.cp,
+    d.pais,
+  ]
+    .map((x) => (typeof x === 'string' ? x.trim() : ''))
+    .filter(Boolean)
+  return partes.length ? partes.join(', ') : null
+})
+
+const mapsPinUrl = computed(() => {
+  const d = tc.value
+  if (
+    d?.lat != null
+    && d?.lng != null
+    && Number.isFinite(d.lat)
+    && Number.isFinite(d.lng)
+  )
+    return `https://www.google.com/maps?q=${d.lat},${d.lng}`
+  return null
+})
+
+const subtituloTerrenoLabels: Record<string, string> = {
+  terreno_comercial: 'Terreno comercial',
+  terreno_campestre: 'Terreno campestre',
+  terreno_playa: 'Terreno de playa',
+  terreno_industrial: 'Terreno industrial',
+  terreno_residencial: 'Terreno residencial',
+}
+
+const tituloBloqueTerreno = computed(() => {
+  const s = tc.value?.subtipo
+  if (s && subtituloTerrenoLabels[s]) return subtituloTerrenoLabels[s]
+  return 'Terreno'
+})
+
 const esDepartamento = computed(
   () => ficha.value.tipoVivienda === 'departamento',
 )
@@ -143,6 +201,125 @@ function fila(claseExtra = '') {
           Terreno sin construcción
         </dd>
       </div>
+
+      <template v-if="tc">
+        <div
+          class="mt-4 rounded-xl border border-royal-500/20 bg-royal-950/25 px-3 py-2"
+        >
+          <p
+            class="text-[10px] font-semibold uppercase tracking-widest text-royal-300/90"
+          >
+            {{ tituloBloqueTerreno }}
+          </p>
+          <p
+            v-if="tc.estadoTerreno"
+            class="mt-1 text-xs text-slate-400"
+          >
+            {{
+              etiquetaEstadoTerreno[tc.estadoTerreno] ?? tc.estadoTerreno
+            }}
+          </p>
+        </div>
+        <div v-if="direccionExtendida" :class="fila()">
+          <dt class="max-w-[55%] shrink-0 text-slate-500">Ubicación detallada</dt>
+          <dd class="text-right text-sm font-medium text-white">
+            {{ direccionExtendida }}
+          </dd>
+        </div>
+        <div
+          v-if="tc.manzana || tc.lotePredial"
+          :class="fila()"
+        >
+          <dt class="shrink-0 text-slate-500">Manzana / lote</dt>
+          <dd class="text-right font-medium text-white">
+            <template v-if="tc.manzana">Mz. {{ tc.manzana }}</template>
+            <template v-if="tc.manzana && tc.lotePredial"> · </template>
+            <template v-if="tc.lotePredial">Lt. {{ tc.lotePredial }}</template>
+          </dd>
+        </div>
+        <div
+          v-if="tc.metrosFrente != null || tc.metrosFondo != null"
+          :class="fila()"
+        >
+          <dt class="shrink-0 text-slate-500">Frente / fondo</dt>
+          <dd class="text-right font-medium text-white">
+            <template v-if="tc.metrosFrente != null"
+              >{{ tc.metrosFrente }} m frente</template
+            >
+            <template
+              v-if="tc.metrosFrente != null && tc.metrosFondo != null"
+              > · </template
+            >
+            <template v-if="tc.metrosFondo != null"
+              >{{ tc.metrosFondo }} m fondo</template
+            >
+          </dd>
+        </div>
+        <div v-if="tc.formaTerreno" :class="fila()">
+          <dt class="shrink-0 text-slate-500">Forma</dt>
+          <dd class="text-right font-medium text-white">
+            {{ etiquetaForma[tc.formaTerreno] ?? tc.formaTerreno }}
+          </dd>
+        </div>
+        <div v-if="tc.tipoRiego" :class="fila()">
+          <dt class="shrink-0 text-slate-500">Riego</dt>
+          <dd class="text-right font-medium text-white">
+            {{ tc.tipoRiego }}
+          </dd>
+        </div>
+        <div v-if="tc.usoSuelo" :class="fila()">
+          <dt class="shrink-0 text-slate-500">Uso de suelo</dt>
+          <dd class="text-right font-medium text-white">
+            {{ tc.usoSuelo }}
+          </dd>
+        </div>
+        <div
+          v-if="mapsPinUrl"
+          class="mt-2 border-t border-white/5 pt-3"
+        >
+          <a
+            :href="mapsPinUrl"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-xs font-medium text-royal-300 underline-offset-2 hover:underline"
+            >Ver en Google Maps</a
+          >
+        </div>
+        <div
+          v-if="tc.notas"
+          class="mt-3 rounded-lg border border-white/[0.06] bg-white/[0.02] p-3"
+        >
+          <p
+            class="text-[10px] font-semibold uppercase tracking-wider text-slate-500"
+          >
+            Notas
+          </p>
+          <p class="mt-1 whitespace-pre-wrap text-xs leading-relaxed text-slate-300">
+            {{ tc.notas }}
+          </p>
+        </div>
+        <div
+          v-if="tc.videoUrl || tc.planosUrl"
+          class="mt-2 flex flex-wrap gap-3 text-xs"
+        >
+          <a
+            v-if="tc.videoUrl"
+            :href="tc.videoUrl"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="font-medium text-royal-300 underline-offset-2 hover:underline"
+            >Video</a
+          >
+          <a
+            v-if="tc.planosUrl"
+            :href="tc.planosUrl"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="font-medium text-royal-300 underline-offset-2 hover:underline"
+            >Planos</a
+          >
+        </div>
+      </template>
 
       <div v-if="!esTerreno && textoNivelesVivienda" :class="fila()">
         <dt class="shrink-0 text-slate-500">Niveles de la vivienda</dt>

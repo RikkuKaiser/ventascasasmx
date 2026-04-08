@@ -6,6 +6,8 @@ export default defineNuxtConfig({
     public: {
       /** Backend Nest: http://localhost:3001/api (vacío = solo datos locales) */
       apiBase: process.env.NUXT_PUBLIC_API_BASE || '',
+      /** Reservado por si en el futuro integras otra vista con Google Maps JS */
+      googleMapsApiKey: process.env.NUXT_PUBLIC_GOOGLE_MAPS_KEY || '',
       // Solo dígitos internacionales (ej. México celular: 521 + 10 dígitos). Ver NUXT_PUBLIC_WHATSAPP_PHONE
       whatsappPhone: process.env.NUXT_PUBLIC_WHATSAPP_PHONE || '',
       whatsappDefaultMessage:

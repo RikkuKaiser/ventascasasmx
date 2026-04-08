@@ -3,7 +3,7 @@ import { useFavoritosStore } from '~/stores/favoritos'
 
 const props = withDefaults(
   defineProps<{
-    inmuebleId: string
+    inmuebleId: string | number
     /** Sobre imagen (sombra) o inline claro */
     variante?: 'overlay' | 'inline'
   }>(),
@@ -12,12 +12,14 @@ const props = withDefaults(
 
 const favoritos = useFavoritosStore()
 
-const activo = computed(() => favoritos.tiene(props.inmuebleId))
+const idStr = computed(() => String(props.inmuebleId))
+
+const activo = computed(() => favoritos.tiene(idStr.value))
 
 async function click(e: MouseEvent) {
   e.preventDefault()
   e.stopPropagation()
-  await favoritos.alternar(props.inmuebleId)
+  await favoritos.alternar(idStr.value)
 }
 </script>
 
