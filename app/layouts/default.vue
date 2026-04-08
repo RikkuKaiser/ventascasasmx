@@ -25,9 +25,7 @@ function salir() {
       />
     </div>
     <AppHeader />
-    <main
-      class="relative z-10 flex-1 pt-[max(3.5rem,env(safe-area-inset-top)+2.75rem)] md:pt-0"
-    >
+    <main class="relative z-10 flex-1">
       <slot />
     </main>
     <footer
@@ -61,6 +59,13 @@ function salir() {
           <span class="text-slate-700" aria-hidden="true">·</span>
           <NuxtLink to="/publicar" class="transition hover:text-royal-300">
             Publicar
+          </NuxtLink>
+          <span class="text-slate-700" aria-hidden="true">·</span>
+          <NuxtLink
+            to="/publicar-terrenos"
+            class="transition hover:text-royal-300"
+          >
+            Terrenos
           </NuxtLink>
           <span class="text-slate-700" aria-hidden="true">·</span>
           <NuxtLink to="/favoritos" class="transition hover:text-royal-300">
