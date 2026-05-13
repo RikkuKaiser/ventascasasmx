@@ -41,6 +41,8 @@ const esTerreno = computed(() => ficha.value.tipoVivienda === 'terreno')
 
 const tc = computed(() => ficha.value.terrenoCampestre)
 
+const pi = computed(() => ficha.value.publicacionInmueble)
+
 const etiquetaEstadoTerreno: Record<string, string> = {
   listo_construir: 'Listo para construir',
   obra_negra: 'Obra negra',
@@ -79,7 +81,31 @@ const mapsPinUrl = computed(() => {
     && Number.isFinite(d.lng)
   )
     return `https://www.google.com/maps?q=${d.lat},${d.lng}`
+  const p = pi.value
+  if (
+    p?.lat != null
+    && p?.lng != null
+    && Number.isFinite(p.lat)
+    && Number.isFinite(p.lng)
+  )
+    return `https://www.google.com/maps?q=${p.lat},${p.lng}`
   return null
+})
+
+const direccionPublicacion = computed(() => {
+  const p = pi.value
+  if (!p) return null
+  const partes = [
+    p.calleNumero,
+    ficha.value.zona,
+    ficha.value.ciudad,
+    p.estado,
+    p.cp ? `C.P. ${p.cp}` : '',
+    p.pais,
+  ]
+    .map((x) => (typeof x === 'string' ? x.trim() : ''))
+    .filter(Boolean)
+  return partes.length ? partes.join(', ') : null
 })
 
 const subtituloTerrenoLabels: Record<string, string> = {
@@ -299,7 +325,7 @@ function fila(claseExtra = '') {
           </p>
         </div>
         <div
-          v-if="tc.videoUrl || tc.planosUrl"
+          v-if="tc.videoUrl || tc.planosUrl || (tc.videos && tc.videos.length)"
           class="mt-2 flex flex-wrap gap-3 text-xs"
         >
           <a
@@ -311,8 +337,84 @@ function fila(claseExtra = '') {
             >Video</a
           >
           <a
+            v-for="(u, i) in tc.videos || []"
+            :key="`tc-v-${i}`"
+            :href="u"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="font-medium text-royal-300 underline-offset-2 hover:underline"
+            >Video archivo {{ i + 1 }}</a
+          >
+          <a
             v-if="tc.planosUrl"
             :href="tc.planosUrl"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="font-medium text-royal-300 underline-offset-2 hover:underline"
+            >Planos</a
+          >
+        </div>
+      </template>
+
+      <template v-if="pi && !esTerreno">
+        <div
+          v-if="direccionPublicacion"
+          :class="fila()"
+        >
+          <dt class="max-w-[55%] shrink-0 text-slate-500">Dirección completa</dt>
+          <dd class="text-right text-sm font-medium text-white">
+            {{ direccionPublicacion }}
+          </dd>
+        </div>
+        <div
+          v-if="mapsPinUrl && pi"
+          class="mt-2 border-t border-white/5 pt-3"
+        >
+          <a
+            :href="mapsPinUrl"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-xs font-medium text-royal-300 underline-offset-2 hover:underline"
+            >Ver en Google Maps</a
+          >
+        </div>
+        <div
+          v-if="pi.notas"
+          class="mt-3 rounded-lg border border-white/[0.06] bg-white/[0.02] p-3"
+        >
+          <p
+            class="text-[10px] font-semibold uppercase tracking-wider text-slate-500"
+          >
+            Notas
+          </p>
+          <p class="mt-1 whitespace-pre-wrap text-xs leading-relaxed text-slate-300">
+            {{ pi.notas }}
+          </p>
+        </div>
+        <div
+          v-if="pi.videoUrl || pi.planosUrl || (pi.videos && pi.videos.length)"
+          class="mt-2 flex flex-wrap gap-3 border-t border-white/5 pt-3 text-xs"
+        >
+          <a
+            v-if="pi.videoUrl"
+            :href="pi.videoUrl"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="font-medium text-royal-300 underline-offset-2 hover:underline"
+            >Video</a
+          >
+          <a
+            v-for="(u, i) in pi.videos || []"
+            :key="`pi-v-${i}`"
+            :href="u"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="font-medium text-royal-300 underline-offset-2 hover:underline"
+            >Video archivo {{ i + 1 }}</a
+          >
+          <a
+            v-if="pi.planosUrl"
+            :href="pi.planosUrl"
             target="_blank"
             rel="noopener noreferrer"
             class="font-medium text-royal-300 underline-offset-2 hover:underline"

@@ -4,8 +4,10 @@ import { useInmueblesStore } from '~/stores/inmuebles'
 import {
   TIPO_VIVIENDA_LABELS,
   type Inmueble,
+  type PublicacionInmuebleDetalle,
   type TipoVivienda,
 } from '~/types'
+import { scrollToPublicarField } from '~/composables/useScrollToFormField'
 
 useHead({ title: 'Publicar inmueble — LuxeInmuebles' })
 
@@ -16,15 +18,26 @@ const router = useRouter()
 const inputClass =
   'w-full rounded-lg border border-white/[0.08] bg-night-950/50 px-3 py-2 text-sm leading-snug text-white placeholder:text-slate-600 transition-[border-color,box-shadow] focus:border-royal-400/40 focus:outline-none focus:ring-1 focus:ring-royal-500/20'
 
+/** Borde rojo cuando la validación del envío marca este campo. */
+const inputInvalidClass =
+  '!border-red-500/60 !ring-1 !ring-red-500/30 focus:!border-red-500/70 focus:!ring-red-500/40'
+
 const labelClass =
   'mb-1 block text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-500'
 
 const titulo = ref('')
 const descripcion = ref('')
+const notas = ref('')
 const precio = ref<number | ''>('')
 const moneda = ref('MXN')
 const ciudad = ref('')
 const zona = ref('')
+const calleNumero = ref('')
+const estado = ref('')
+const cp = ref('')
+const pais = ref('México')
+const lat = ref<number | ''>('')
+const lng = ref<number | ''>('')
 const m2Superficie = ref<number | ''>('')
 const m2Construccion = ref<number | ''>('')
 const habitaciones = ref<number | ''>('')
@@ -34,6 +47,11 @@ const etiquetasTexto = ref('')
 const imagen = ref('')
 const archivoPrincipal = ref<File | null>(null)
 const archivosGaleria = ref<File[]>([])
+const archivosVideos = ref<File[]>([])
+const { previewPrincipalUrl, previewGaleria } = useLocalImagePreviews(
+  archivoPrincipal,
+  archivosGaleria,
+)
 const galeriaTexto = ref('')
 const tipoVivienda = ref<TipoVivienda>('departamento')
 const estacionamientos = ref<number | ''>('')
@@ -42,9 +60,13 @@ const pisoDepartamento = ref<number | ''>('')
 const pisosEdificio = ref<number | ''>('')
 const amenidadesTexto = ref('')
 const cuotaMantenimiento = ref<number | ''>('')
+const videoUrl = ref('')
+const planosUrl = ref('')
 
 const error = ref('')
 const enviando = ref(false)
+/** Id del control con error (p. ej. `pub-precio`) para borde rojo + scroll. */
+const campoErrorId = ref<string | null>(null)
 
 const tiposOrdenados = Object.entries(TIPO_VIVIENDA_LABELS) as [
   TipoVivienda,
@@ -57,10 +79,12 @@ const monedaOptions = [
 ]
 
 const tipoOptions = computed(() =>
-  tiposOrdenados.map(([valor, etiqueta]) => ({
-    value: valor,
-    label: etiqueta,
-  })),
+  tiposOrdenados
+    .filter(([valor]) => valor !== 'terreno')
+    .map(([valor, etiqueta]) => ({
+      value: valor,
+      label: etiqueta,
+    })),
 )
 
 const tabs = [
@@ -75,22 +99,24 @@ const tabs = [
     id: 'ubicacion',
     label: 'Ubicación',
     step: 2,
-    panelTitle: 'Ubicación y tipo',
-    panelHint: 'Ciudad, zona y categoría del inmueble.',
+    panelTitle: '¿Dónde está el inmueble?',
+    panelHint:
+      'Dirección para ubicar en mapa y listados. El tipo de propiedad va en el siguiente paso.',
   },
   {
     id: 'medidas',
-    label: 'Medidas',
+    label: 'Espacios',
     step: 3,
-    panelTitle: 'Espacios',
-    panelHint: 'Superficies, recámaras y datos opcionales del edificio.',
+    panelTitle: 'Tipo y medidas',
+    panelHint:
+      'Tipo de vivienda, superficies, recámaras, baños y datos del edificio si aplica.',
   },
   {
     id: 'fotos',
     label: 'Multimedia',
     step: 4,
-    panelTitle: 'Fotos y detalles',
-    panelHint: 'Imagen principal, galería, etiquetas y amenidades.',
+    panelTitle: 'Fotos y extras',
+    panelHint: 'Portada, galería, video y enlaces opcionales; etiquetas y amenidades.',
   },
 ] as const
 
@@ -131,6 +157,43 @@ function optInt(v: number | ''): number | undefined {
   return Number.isFinite(n) ? Math.trunc(n) : undefined
 }
 
+function optNum(v: number | ''): number | undefined {
+  if (v === '' || v == null) return undefined
+  const n = Number(v)
+  return Number.isFinite(n) ? n : undefined
+}
+
+function buildPublicacionInmueble(): PublicacionInmuebleDetalle | undefined {
+  const o: PublicacionInmuebleDetalle = {}
+  if (calleNumero.value.trim()) o.calleNumero = calleNumero.value.trim()
+  if (estado.value.trim()) o.estado = estado.value.trim()
+  if (cp.value.trim()) o.cp = cp.value.trim()
+  if (pais.value.trim()) o.pais = pais.value.trim()
+  const la = optNum(lat.value)
+  const ln = optNum(lng.value)
+  if (la != null) o.lat = la
+  if (ln != null) o.lng = ln
+  if (videoUrl.value.trim()) o.videoUrl = videoUrl.value.trim()
+  if (planosUrl.value.trim()) o.planosUrl = planosUrl.value.trim()
+  if (notas.value.trim()) o.notas = notas.value.trim()
+  return Object.keys(o).length ? o : undefined
+}
+
+function mapsSearchUrl(): string {
+  const parts = [
+    calleNumero.value,
+    zona.value,
+    ciudad.value,
+    estado.value,
+    cp.value,
+    pais.value,
+  ]
+    .map((x) => x.trim())
+    .filter(Boolean)
+  const q = encodeURIComponent(parts.join(', ') || 'México')
+  return `https://www.google.com/maps/search/?api=1&query=${q}`
+}
+
 function onPrincipalFile(e: Event) {
   const el = e.target as HTMLInputElement
   archivoPrincipal.value = el.files?.[0] ?? null
@@ -142,29 +205,59 @@ function onGaleriaFiles(e: Event) {
   archivosGaleria.value = list ? Array.from(list) : []
 }
 
+function onVideosFiles(e: Event) {
+  const el = e.target as HTMLInputElement
+  const list = el.files
+  archivosVideos.value = list ? Array.from(list) : []
+}
+
 async function submit() {
   error.value = ''
+  campoErrorId.value = null
   if (!auth.sesion) {
     error.value = 'Debes iniciar sesión para publicar.'
+    await scrollToPublicarField('pub-titulo', tabActiva, campoErrorId)
     return
   }
   if (!titulo.value.trim() || !descripcion.value.trim()) {
     error.value = 'Título y descripción son obligatorios.'
+    await scrollToPublicarField(
+      !titulo.value.trim() ? 'pub-titulo' : 'pub-desc',
+      tabActiva,
+      campoErrorId,
+    )
     return
   }
   if (!archivoPrincipal.value && !imagen.value.trim()) {
     error.value =
       'Sube una foto principal o indica la URL de la imagen principal.'
+    await scrollToPublicarField('pub-file-principal', tabActiva, campoErrorId)
     return
   }
-  const precioN = num(precio)
+  const precioN = num(precio.value)
   if (precioN <= 0) {
     error.value = 'Indica un precio válido mayor a cero.'
+    await scrollToPublicarField('pub-precio', tabActiva, campoErrorId)
+    return
+  }
+  if (!ciudad.value.trim() || !zona.value.trim()) {
+    error.value = 'Ciudad o municipio y colonia son obligatorios.'
+    await scrollToPublicarField(
+      !ciudad.value.trim() ? 'pub-ciudad' : 'pub-zona',
+      tabActiva,
+      campoErrorId,
+    )
+    return
+  }
+  if (!estado.value.trim()) {
+    error.value = 'Indica el estado.'
+    await scrollToPublicarField('pub-edo', tabActiva, campoErrorId)
     return
   }
 
   enviando.value = true
   try {
+    const pi = buildPublicacionInmueble()
     const cuerpo: Omit<Inmueble, 'id'> = {
       titulo: titulo.value.trim(),
       descripcion: descripcion.value.trim(),
@@ -172,34 +265,38 @@ async function submit() {
       moneda: moneda.value.trim().toUpperCase().slice(0, 8) || 'MXN',
       ciudad: ciudad.value.trim(),
       zona: zona.value.trim(),
-      m2Superficie: num(m2Superficie),
-      m2Construccion: num(m2Construccion),
-      habitaciones: Math.trunc(num(habitaciones)),
-      banos: Math.trunc(num(banos)),
+      m2Superficie: num(m2Superficie.value),
+      m2Construccion: num(m2Construccion.value),
+      habitaciones: Math.trunc(num(habitaciones.value)),
+      banos: Math.trunc(num(banos.value)),
       destacado: destacado.value,
       etiquetas: parseLineas(etiquetasTexto.value),
       imagen: archivoPrincipal.value ? '' : imagen.value.trim(),
       tipoVivienda: tipoVivienda.value,
-      estacionamientos: Math.trunc(num(estacionamientos)),
+      estacionamientos: Math.trunc(num(estacionamientos.value)),
       amenidades: parseLineas(amenidadesTexto.value),
-      cuotaMantenimiento: num(cuotaMantenimiento),
+      cuotaMantenimiento: num(cuotaMantenimiento.value),
     }
     const gal = parseLineas(galeriaTexto.value)
     if (gal.length) cuerpo.galeria = gal
-    const pv = optInt(pisosVivienda)
+    const pv = optInt(pisosVivienda.value)
     if (pv != null) cuerpo.pisosVivienda = pv
-    const pd = optInt(pisoDepartamento)
+    const pd = optInt(pisoDepartamento.value)
     if (pd != null) cuerpo.pisoDepartamento = pd
-    const pe = optInt(pisosEdificio)
+    const pe = optInt(pisosEdificio.value)
     if (pe != null) cuerpo.pisosEdificio = pe
+    if (pi) cuerpo.publicacionInmueble = pi
 
     const r = await inmuebles.publicarInmueble(cuerpo, {
       principal: archivoPrincipal.value,
       galeria:
         archivosGaleria.value.length > 0 ? archivosGaleria.value : undefined,
+      videos:
+        archivosVideos.value.length > 0 ? archivosVideos.value : undefined,
     })
     if (!r.ok) {
       error.value = r.error
+      await scrollToPublicarField('pub-titulo', tabActiva, campoErrorId)
       return
     }
     await router.push(`/inmuebles/${r.id}`)
@@ -230,7 +327,7 @@ async function submit() {
           <p
             class="mx-auto mt-1 max-w-xl text-xs leading-snug text-slate-500 md:mx-0 sm:text-sm"
           >
-            Cuatro pasos breves; al enviar, tu anuncio entra al catálogo.
+            Cuatro pasos: anuncio, ubicación con mapa, medidas y fotos. Los terrenos van en su propio formulario.
           </p>
           <NuxtLink
             to="/publicar-terrenos"
@@ -298,6 +395,23 @@ async function submit() {
               :style="{ width: `${progresoPct}%` }"
             />
           </div>
+        </div>
+
+        <div
+          class="mb-4 flex flex-wrap items-center gap-2 rounded-xl border border-royal-500/25 bg-royal-950/20 px-3 py-2.5 sm:px-4"
+        >
+          <span
+            class="rounded-md bg-white/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-royal-200"
+            >Venta</span
+          >
+          <span class="text-slate-500">·</span>
+          <span class="text-xs text-slate-300">Casa, depto., loft…</span>
+          <span class="text-slate-500">·</span>
+          <NuxtLink
+            to="/publicar-terrenos"
+            class="text-xs font-medium text-royal-300 underline-offset-2 hover:underline"
+            >¿Solo terreno? → Terrenos</NuxtLink
+          >
         </div>
 
         <!-- Stepper / tabs -->
@@ -457,7 +571,10 @@ async function submit() {
                       type="text"
                       required
                       maxlength="500"
-                      :class="inputClass"
+                      :class="[
+                        inputClass,
+                        campoErrorId === 'pub-titulo' ? inputInvalidClass : '',
+                      ]"
                       placeholder="Ej. Departamento luminoso en zona tranquila"
                     />
                   </div>
@@ -468,10 +585,25 @@ async function submit() {
                       v-model="descripcion"
                 required
                 rows="4"
-                :class="inputClass"
+                :class="[
+                  inputClass,
+                  campoErrorId === 'pub-desc' ? inputInvalidClass : '',
+                ]"
                 placeholder="Describe la propiedad, estado, entorno…"
               />
             </div>
+                  <div>
+                    <label :class="labelClass" for="pub-notas"
+                      >Notas adicionales (opcional)</label
+                    >
+                    <textarea
+                      id="pub-notas"
+                      v-model="notas"
+                      rows="2"
+                      :class="inputClass"
+                      placeholder="Detalles que quieras guardar en la ficha (también se envían al servidor)."
+                    />
+                  </div>
                   <div class="grid gap-3 sm:grid-cols-2 sm:gap-4">
                     <div>
                       <label :class="labelClass" for="pub-precio">Precio</label>
@@ -482,7 +614,10 @@ async function submit() {
                         min="1"
                         step="1"
                         required
-                        :class="inputClass"
+                        :class="[
+                          inputClass,
+                          campoErrorId === 'pub-precio' ? inputInvalidClass : '',
+                        ]"
                       />
                     </div>
                     <div>
@@ -514,30 +649,142 @@ async function submit() {
 
               <template v-else-if="tabActiva === 1">
                 <div class="space-y-3">
+                  <div>
+                    <label :class="labelClass" for="pub-calle"
+                      >Calle y número</label
+                    >
+                    <input
+                      id="pub-calle"
+                      v-model="calleNumero"
+                      type="text"
+                      maxlength="500"
+                      :class="[
+                        inputClass,
+                        campoErrorId === 'pub-calle' ? inputInvalidClass : '',
+                      ]"
+                      placeholder="Ej. Av. Insurgentes Sur 1647"
+                    />
+                  </div>
                   <div class="grid gap-3 sm:grid-cols-2 sm:gap-4">
                     <div>
-                      <label :class="labelClass" for="pub-ciudad">Ciudad</label>
+                      <label :class="labelClass" for="pub-cp">C.P.</label>
+                      <input
+                        id="pub-cp"
+                        v-model="cp"
+                        type="text"
+                        maxlength="12"
+                        :class="inputClass"
+                      />
+                    </div>
+                    <div>
+                      <label :class="labelClass" for="pub-edo"
+                        >Estado <span class="text-rose-400">*</span></label
+                      >
+                      <input
+                        id="pub-edo"
+                        v-model="estado"
+                        type="text"
+                        required
+                        maxlength="200"
+                        :class="[
+                          inputClass,
+                          campoErrorId === 'pub-edo' ? inputInvalidClass : '',
+                        ]"
+                      />
+                    </div>
+                  </div>
+                  <div class="grid gap-3 sm:grid-cols-2 sm:gap-4">
+                    <div>
+                      <label :class="labelClass" for="pub-ciudad"
+                        >Ciudad o municipio <span class="text-rose-400">*</span></label
+                      >
                       <input
                         id="pub-ciudad"
                         v-model="ciudad"
                         type="text"
                         required
-                        :class="inputClass"
+                        maxlength="200"
+                        :class="[
+                          inputClass,
+                          campoErrorId === 'pub-ciudad' ? inputInvalidClass : '',
+                        ]"
                       />
                     </div>
                     <div>
                       <label :class="labelClass" for="pub-zona"
-                        >Zona / colonia</label
+                        >Colonia <span class="text-rose-400">*</span></label
                       >
                       <input
                         id="pub-zona"
                         v-model="zona"
                         type="text"
                         required
-                        :class="inputClass"
+                        maxlength="200"
+                        :class="[
+                          inputClass,
+                          campoErrorId === 'pub-zona' ? inputInvalidClass : '',
+                        ]"
                       />
                     </div>
                   </div>
+                  <div>
+                    <label :class="labelClass" for="pub-pais">País</label>
+                    <input
+                      id="pub-pais"
+                      v-model="pais"
+                      type="text"
+                      maxlength="120"
+                      :class="inputClass"
+                    />
+                  </div>
+                  <div class="grid gap-3 sm:grid-cols-2 sm:gap-4">
+                    <div>
+                      <label :class="labelClass" for="pub-lat"
+                        >Latitud (opcional)</label
+                      >
+                      <input
+                        id="pub-lat"
+                        v-model.number="lat"
+                        type="number"
+                        step="any"
+                        :class="inputClass"
+                        placeholder="Ej. 19.4326"
+                      />
+                    </div>
+                    <div>
+                      <label :class="labelClass" for="pub-lng"
+                        >Longitud (opcional)</label
+                      >
+                      <input
+                        id="pub-lng"
+                        v-model.number="lng"
+                        type="number"
+                        step="any"
+                        :class="inputClass"
+                        placeholder="Ej. -99.1332"
+                      />
+                    </div>
+                  </div>
+                  <ClientOnly>
+                    <TerrenoMapaPin
+                      :lat="lat === '' ? undefined : lat"
+                      :lng="lng === '' ? undefined : lng"
+                      @update:lat="lat = $event ?? ''"
+                      @update:lng="lng = $event ?? ''"
+                    />
+                  </ClientOnly>
+                  <a
+                    :href="mapsSearchUrl()"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex text-xs font-medium text-royal-300 underline-offset-2 hover:underline"
+                    >Abrir búsqueda en Google Maps</a
+                  >
+                </div>
+              </template>
+
+              <template v-else-if="tabActiva === 2">
+                <div class="space-y-3">
                   <div>
                     <label :class="labelClass" for="pub-tipo"
                       >Tipo de vivienda</label
@@ -550,11 +797,6 @@ async function submit() {
                       comfortable
                     />
                   </div>
-                </div>
-              </template>
-
-              <template v-else-if="tabActiva === 2">
-                <div class="space-y-3">
                   <div class="grid gap-3 sm:grid-cols-2 sm:gap-4">
                     <div>
                       <label :class="labelClass" for="pub-m2s"
@@ -696,13 +938,23 @@ async function submit() {
                     <label :class="labelClass" for="pub-file-principal"
                       >Foto principal (archivo)</label
                     >
-                    <input
-                      id="pub-file-principal"
-                      type="file"
-                      accept="image/jpeg,image/png,image/webp,image/gif"
-                      class="block w-full cursor-pointer text-xs text-slate-400 file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-white/10 file:px-3 file:py-2 file:text-sm file:text-slate-200 hover:file:bg-white/15"
-                      @change="onPrincipalFile"
-                    />
+                    <div
+                      class="rounded-lg p-0.5 transition-[box-shadow]"
+                      :class="
+                        campoErrorId === 'pub-file-principal'
+                          ? 'ring-2 ring-red-500/50'
+                          : ''
+                      "
+                    >
+                      <input
+                        id="pub-file-principal"
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp,image/gif"
+                        class="block w-full cursor-pointer text-xs text-slate-400 file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-white/10 file:px-3 file:py-2 file:text-sm file:text-slate-200 hover:file:bg-white/15"
+                        @change="onPrincipalFile"
+                      />
+                    </div>
+                    <PreviewPortadaArchivo :url="previewPrincipalUrl" />
                     <p class="mt-1 text-[10px] text-slate-600">
                       Con API y GCS configurado, se guarda en
                       <code class="text-slate-500">inmuebles/&lt;id&gt;/principal…</code>
@@ -720,6 +972,7 @@ async function submit() {
                       class="block w-full cursor-pointer text-xs text-slate-400 file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-white/10 file:px-3 file:py-2 file:text-sm file:text-slate-200 hover:file:bg-white/15"
                       @change="onGaleriaFiles"
                     />
+                    <PreviewGaleriaArchivos :items="previewGaleria" />
                   </div>
                   <div>
                     <label :class="labelClass" for="pub-img"
@@ -745,6 +998,51 @@ async function submit() {
               :class="inputClass"
                       placeholder="https://…"
                     />
+                  </div>
+                  <div class="grid gap-3 sm:grid-cols-2 sm:gap-4">
+                    <div>
+                      <label :class="labelClass" for="pub-vid"
+                        >Video (URL opcional)</label
+                      >
+                      <input
+                        id="pub-vid"
+                        v-model="videoUrl"
+                        type="url"
+                        :class="inputClass"
+                        placeholder="https://…"
+                      />
+                    </div>
+                    <div>
+                      <label :class="labelClass" for="pub-plan"
+                        >Planos (URL opcional)</label
+                      >
+                      <input
+                        id="pub-plan"
+                        v-model="planosUrl"
+                        type="url"
+                        :class="inputClass"
+                        placeholder="PDF o imagen del plano"
+                      />
+                    </div>
+                    <div class="sm:col-span-2">
+                      <label :class="labelClass" for="pub-vid-files"
+                        >Videos (archivos, opcional)</label
+                      >
+                      <input
+                        id="pub-vid-files"
+                        type="file"
+                        accept="video/mp4,video/webm,video/quicktime,video/mpeg,video/x-msvideo"
+                        multiple
+                        :class="inputClass"
+                        @change="onVideosFiles"
+                      />
+                      <p
+                        v-if="archivosVideos.length"
+                        class="mt-1 text-[11px] text-slate-500"
+                      >
+                        {{ archivosVideos.length }} archivo(s) seleccionado(s)
+                      </p>
+                    </div>
                   </div>
                   <div>
                     <label :class="labelClass" for="pub-eti"

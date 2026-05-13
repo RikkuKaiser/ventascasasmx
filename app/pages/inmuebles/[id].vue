@@ -7,6 +7,13 @@ const id = computed(() => String(route.params.id))
 
 const inmueble = computed(() => store.porId(id.value))
 
+function refrescarDetalle() {
+  if (import.meta.client) void store.refrescarInmuebleDesdeApi(id.value)
+}
+
+onMounted(refrescarDetalle)
+watch(id, refrescarDetalle)
+
 const fotosGaleria = computed(() => {
   const i = inmueble.value
   if (!i) return []
@@ -41,6 +48,7 @@ useHead(() => ({
           :fotos="fotosGaleria"
           :titulo="inmueble.titulo"
         />
+        <InmuebleVideos :inmueble="inmueble" />
         <div class="rounded-2xl glass p-5 md:p-8">
           <div class="flex flex-wrap gap-2">
             <span

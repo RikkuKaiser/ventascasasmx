@@ -25,16 +25,126 @@ export default defineNuxtConfig({
         process.env.NUXT_PUBLIC_RESPONSABLE_NOMBRE || 'LuxeInmuebles',
     },
   },
-  modules: ['@pinia/nuxt', '@nuxtjs/tailwindcss'],
+  modules: ['@pinia/nuxt', '@nuxtjs/tailwindcss', '@vite-pwa/nuxt'],
   css: ['~/assets/css/main.css'],
   vite: {
     optimizeDeps: {
       include: ['@vue/devtools-core', '@vue/devtools-kit'],
     },
   },
+
+  /** PWA: manifest + service worker (Workbox). Iconos en /public/pwa-*.png */
+  pwa: {
+    registerType: 'autoUpdate',
+    strategies: 'generateSW',
+    manifest: {
+      id: '/',
+      name: 'Ventas Casa Mx',
+      short_name: 'Ventas Casa',
+      description:
+        'Anuncia y descubre casas, departamentos y terrenos en México. Funciona instalada como app.',
+      lang: 'es-MX',
+      dir: 'ltr',
+      display: 'standalone',
+      display_override: ['standalone', 'minimal-ui', 'browser', 'window-controls-overlay'],
+      background_color: '#05080f',
+      theme_color: '#0a0f1a',
+      /** Tablet / escritorio: sin forzar solo retrato */
+      orientation: 'any',
+      start_url: '/',
+      scope: '/',
+      categories: ['business', 'lifestyle'],
+      /** Enlaces del mismo sitio abren en la ventana de la PWA cuando está instalada (Chrome). */
+      handle_links: 'preferred',
+      shortcuts: [
+        {
+          name: 'Inicio',
+          short_name: 'Inicio',
+          url: '/',
+          description: 'Portada y búsqueda rápida',
+          icons: [{ src: 'pwa-192.png', sizes: '192x192', type: 'image/png' }],
+        },
+        {
+          name: 'Inmuebles',
+          short_name: 'Inmuebles',
+          url: '/inmuebles',
+          description: 'Catálogo de propiedades',
+          icons: [{ src: 'pwa-192.png', sizes: '192x192', type: 'image/png' }],
+        },
+        {
+          name: 'Publicar',
+          short_name: 'Publicar',
+          url: '/publicar',
+          description: 'Publicar un inmueble',
+          icons: [{ src: 'pwa-192.png', sizes: '192x192', type: 'image/png' }],
+        },
+        {
+          name: 'Favoritos',
+          short_name: 'Favoritos',
+          url: '/favoritos',
+          description: 'Tus inmuebles guardados',
+          icons: [{ src: 'pwa-192.png', sizes: '192x192', type: 'image/png' }],
+        },
+      ],
+      icons: [
+        {
+          src: 'pwa-192.png',
+          sizes: '192x192',
+          type: 'image/png',
+          purpose: 'any',
+        },
+        {
+          src: 'pwa-192.png',
+          sizes: '192x192',
+          type: 'image/png',
+          purpose: 'maskable',
+        },
+        {
+          src: 'pwa-512.png',
+          sizes: '512x512',
+          type: 'image/png',
+          purpose: 'any',
+        },
+        {
+          src: 'pwa-512.png',
+          sizes: '512x512',
+          type: 'image/png',
+          purpose: 'maskable',
+        },
+      ],
+    },
+    workbox: {
+      navigateFallback: '/',
+      globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2,webp}'],
+      runtimeCaching: [
+        {
+          urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+          handler: 'CacheFirst',
+          options: {
+            cacheName: 'google-fonts-stylesheets',
+            expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 365 },
+          },
+        },
+        {
+          urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
+          handler: 'CacheFirst',
+          options: {
+            cacheName: 'google-fonts-webfonts',
+            expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 365 },
+          },
+        },
+      ],
+    },
+    /** En desarrollo: `PWA_DEV=true` en `.env` para registrar SW y probar instalación */
+    devOptions: {
+      enabled: process.env.PWA_DEV === 'true',
+      suppressWarnings: true,
+      type: 'module',
+    },
+  },
   app: {
     head: {
-      title: 'LuxeInmuebles — Anuncia con elegancia',
+      title: 'Ventas Casa Mx — Inmuebles en México',
       htmlAttrs: { lang: 'es' },
       meta: [
         {
@@ -44,10 +154,31 @@ export default defineNuxtConfig({
         },
         {
           name: 'description',
-          content: 'Plataforma elegante para anunciar y descubrir inmuebles.',
+          content:
+            'Casas, departamentos y terrenos en México. Instala la app en tu celular.',
         },
+        { name: 'application-name', content: 'Ventas Casa Mx' },
+        { name: 'theme-color', content: '#0a0f1a' },
+        { name: 'msapplication-TileColor', content: '#0a0f1a' },
+        { name: 'apple-mobile-web-app-capable', content: 'yes' },
+        {
+          name: 'apple-mobile-web-app-status-bar-style',
+          content: 'black-translucent',
+        },
+        { name: 'apple-mobile-web-app-title', content: 'Ventas Casa Mx' },
+        { name: 'mobile-web-app-capable', content: 'yes' },
       ],
       link: [
+        {
+          rel: 'apple-touch-icon',
+          href: '/pwa-192.png',
+          sizes: '180x180',
+        },
+        {
+          rel: 'apple-touch-icon',
+          href: '/pwa-192.png',
+          sizes: '192x192',
+        },
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
         {
           rel: 'preconnect',

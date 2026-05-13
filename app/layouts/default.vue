@@ -12,7 +12,7 @@ function salir() {
 </script>
 
 <template>
-  <div class="relative min-h-screen flex flex-col">
+  <div class="relative flex min-h-screen min-h-dvh flex-col">
     <div
       class="pointer-events-none fixed inset-0 overflow-hidden"
       aria-hidden="true"

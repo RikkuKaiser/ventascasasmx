@@ -52,6 +52,8 @@ export interface TerrenoCampestreDetalle {
   estadoTerreno?: 'listo_construir' | 'obra_negra' | 'venta_como_terreno'
   notas?: string
   videoUrl?: string
+  /** URLs de archivos de video subidos a GCS (`{id}/videos/`) */
+  videos?: string[]
   planosUrl?: string
   metrosFondo?: number
   metrosFrente?: number
@@ -62,6 +64,15 @@ export interface TerrenoCampestreDetalle {
   seguridadPrivada?: boolean
   aptoCredito?: boolean
   servicios?: TerrenoServiciosDetalle
+}
+
+/** Fila de `inmueble_archivos` (API). */
+export interface InmuebleArchivoItem {
+  id: number
+  tipo: 'principal' | 'galeria' | 'video'
+  url: string
+  objectPath: string | null
+  sortOrder: number
 }
 
 export interface Inmueble {
@@ -100,6 +111,25 @@ export interface Inmueble {
   cuotaMantenimiento: number
   /** Presente si se publicó con el formulario de terreno campestre (u otro terreno extendido). */
   terrenoCampestre?: TerrenoCampestreDetalle
+  /** Dirección ampliada / mapa / video (formulario publicar inmueble). */
+  publicacionInmueble?: PublicacionInmuebleDetalle
+  /** Metadatos de archivos (BD); en `GET /inmuebles/:id` si el API los incluye. */
+  archivos?: InmuebleArchivoItem[]
+}
+
+/** JSON `publicacion_inmueble` en API. */
+export interface PublicacionInmuebleDetalle {
+  calleNumero?: string
+  estado?: string
+  cp?: string
+  pais?: string
+  lat?: number
+  lng?: number
+  videoUrl?: string
+  /** URLs de archivos de video subidos a GCS (`{id}/videos/`) */
+  videos?: string[]
+  planosUrl?: string
+  notas?: string
 }
 
 export interface Comentario {

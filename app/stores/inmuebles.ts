@@ -350,6 +350,21 @@ export const useInmueblesStore = defineStore('inmuebles', () => {
     return lista.value.find((i) => String(i.id) === s)
   }
 
+  /** Sustituye el ítem en `lista` con la respuesta de `GET /inmuebles/:id` (incluye `archivos`). */
+  async function refrescarInmuebleDesdeApi(id: string | number) {
+    const base = useApiBase()
+    if (!base) return
+    const s = String(id)
+    try {
+      const fresh = await $fetch<Inmueble>(`${base}/inmuebles/${encodeURIComponent(s)}`)
+      const idx = lista.value.findIndex((i) => String(i.id) === s)
+      if (idx >= 0) lista.value[idx] = fresh
+      else lista.value = [fresh, ...lista.value]
+    } catch {
+      /* 404 u offline: se conserva lo que ya hubiera en lista */
+    }
+  }
+
   function formatearPrecio(i: Inmueble) {
     return new Intl.NumberFormat('es-MX', {
       style: 'currency',
@@ -374,7 +389,7 @@ export const useInmueblesStore = defineStore('inmuebles', () => {
   /** Cuerpo sin `id`, alineado con el API y el tipo `Inmueble`. */
   async function publicarInmueble(
     cuerpo: Omit<Inmueble, 'id'>,
-    archivos?: { principal?: File | null; galeria?: File[] },
+    archivos?: { principal?: File | null; galeria?: File[]; videos?: File[] },
   ): Promise<{ ok: true; id: string } | { ok: false; error: string }> {
     const auth = useAuthStore()
     if (!auth.sesion)
@@ -390,6 +405,7 @@ export const useInmueblesStore = defineStore('inmuebles', () => {
       const useMultipart = !!(
         archivos?.principal
         || (archivos?.galeria && archivos.galeria.length > 0)
+        || (archivos?.videos && archivos.videos.length > 0)
       )
       try {
         let created: Inmueble
@@ -402,6 +418,7 @@ export const useInmueblesStore = defineStore('inmuebles', () => {
           if (archivos?.principal)
             fd.append('principal', archivos.principal)
           archivos?.galeria?.forEach((f) => fd.append('galeria', f))
+          archivos?.videos?.forEach((f) => fd.append('videos', f))
           created = await $fetch<Inmueble>(`${base}/inmuebles/con-fotos`, {
             method: 'POST',
             headers: { Authorization: `Bearer ${auth.sesion.accessToken}` },
@@ -437,6 +454,7 @@ export const useInmueblesStore = defineStore('inmuebles', () => {
     sincronizarDesdeApi,
     publicarInmueble,
     porId,
+    refrescarInmuebleDesdeApi,
     formatearPrecio,
     formatearCuotaMantenimiento,
   }

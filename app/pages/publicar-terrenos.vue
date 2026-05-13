@@ -2,6 +2,7 @@
 import { useAuthStore } from '~/stores/auth'
 import { useInmueblesStore } from '~/stores/inmuebles'
 import type { Inmueble, TerrenoCampestreDetalle, TerrenoServiciosDetalle } from '~/types'
+import { scrollToTerrenoField } from '~/composables/useScrollToFormField'
 
 useHead({ title: 'Terrenos — LuxeInmuebles' })
 
@@ -11,6 +12,9 @@ const router = useRouter()
 
 const inputClass =
   'w-full rounded-lg border border-white/[0.08] bg-night-950/50 px-3 py-2 text-sm leading-snug text-white placeholder:text-slate-600 transition-[border-color,box-shadow] focus:border-royal-400/40 focus:outline-none focus:ring-1 focus:ring-royal-500/20'
+
+const inputInvalidClass =
+  '!border-red-500/60 !ring-1 !ring-red-500/30 focus:!border-red-500/70 focus:!ring-red-500/40'
 
 const labelClass =
   'mb-1 block text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-500'
@@ -142,12 +146,18 @@ const etiquetasTexto = ref('')
 // —— Fotos ——
 const archivoPrincipal = ref<File | null>(null)
 const archivosGaleria = ref<File[]>([])
+const archivosVideos = ref<File[]>([])
+const { previewPrincipalUrl, previewGaleria } = useLocalImagePreviews(
+  archivoPrincipal,
+  archivosGaleria,
+)
 const imagen = ref('')
 const galeriaTexto = ref('')
 const videoUrl = ref('')
 const planosUrl = ref('')
 
 const error = ref('')
+const campoErrorId = ref<string | null>(null)
 const enviando = ref(false)
 
 const monedaOptions = [
@@ -205,7 +215,7 @@ function optNum(v: number | ''): number | undefined {
 }
 
 function superficieEnM2(): number {
-  const v = num(superficieTerreno)
+  const v = num(superficieTerreno.value)
   if (v <= 0) return 0
   return unidadSuperficie.value === 'ha' ? v * 10000 : v
 }
@@ -236,8 +246,8 @@ function buildTerrenoCampestre(): TerrenoCampestreDetalle {
     colonia: colonia.value.trim() || undefined,
     cp: cp.value.trim() || undefined,
     pais: pais.value.trim() || undefined,
-    lat: optNum(lat),
-    lng: optNum(lng),
+    lat: optNum(lat.value),
+    lng: optNum(lng.value),
     unidadSuperficie: unidadSuperficie.value,
     manzana: manzana.value.trim() || undefined,
     lotePredial: lotePredial.value.trim() || undefined,
@@ -245,8 +255,8 @@ function buildTerrenoCampestre(): TerrenoCampestreDetalle {
     notas: notas.value.trim() || undefined,
     videoUrl: videoUrl.value.trim() || undefined,
     planosUrl: planosUrl.value.trim() || undefined,
-    metrosFondo: num(metrosFondo),
-    metrosFrente: num(metrosFrente),
+    metrosFondo: num(metrosFondo.value),
+    metrosFrente: num(metrosFrente.value),
     tipoRiego: tipoRiego.value.trim() || undefined,
     usoSuelo: usoSuelo.value.trim() || undefined,
     formaTerreno: formaTerreno.value,
@@ -284,47 +294,75 @@ function onGaleriaFiles(e: Event) {
   archivosGaleria.value = list ? Array.from(list) : []
 }
 
+function onVideosFiles(e: Event) {
+  const el = e.target as HTMLInputElement
+  const list = el.files
+  archivosVideos.value = list ? Array.from(list) : []
+}
+
 async function submit() {
   error.value = ''
+  campoErrorId.value = null
   if (!auth.sesion) {
     error.value = 'Debes iniciar sesión para publicar.'
+    await scrollToTerrenoField('tc-tit', tabActiva, campoErrorId)
     return
   }
   if (!titulo.value.trim() || !descripcion.value.trim()) {
     error.value = 'Título y descripción general son obligatorios.'
+    await scrollToTerrenoField(
+      !titulo.value.trim() ? 'tc-tit' : 'tc-desc',
+      tabActiva,
+      campoErrorId,
+    )
     return
   }
   if (!archivoPrincipal.value && !imagen.value.trim()) {
     error.value =
       'Sube una foto principal o indica la URL de la imagen principal.'
+    await scrollToTerrenoField('tc-fp', tabActiva, campoErrorId)
     return
   }
-  const precioN = num(precio)
+  const precioN = num(precio.value)
   if (precioN <= 0) {
     error.value = 'Indica un precio válido mayor a cero.'
+    await scrollToTerrenoField('tc-pre', tabActiva, campoErrorId)
     return
   }
   if (!ciudadMunicipio.value.trim() || !colonia.value.trim()) {
     error.value = 'Ciudad o municipio y colonia son obligatorios.'
+    await scrollToTerrenoField(
+      !ciudadMunicipio.value.trim() ? 'tc-mun' : 'tc-col',
+      tabActiva,
+      campoErrorId,
+    )
     return
   }
   if (!calleNumero.value.trim()) {
     error.value = 'Indica calle y número (o referencia de ubicación).'
+    await scrollToTerrenoField('tc-calle', tabActiva, campoErrorId)
     return
   }
   if (!estado.value.trim()) {
     error.value = 'Indica el estado.'
+    await scrollToTerrenoField('tc-edo', tabActiva, campoErrorId)
     return
   }
   const m2s = superficieEnM2()
   if (m2s <= 0) {
     error.value = 'Indica la superficie del terreno en m² o hectáreas.'
+    await scrollToTerrenoField('tc-sup', tabActiva, campoErrorId)
     return
   }
-  const mf = num(metrosFondo)
-  const mfr = num(metrosFrente)
+  const mf = num(metrosFondo.value)
+  const mfr = num(metrosFrente.value)
   if (mf <= 0 || mfr <= 0) {
     error.value = 'Metros de fondo y metros de frente son obligatorios.'
+    await scrollToTerrenoField(
+      mf <= 0 ? 'tc-fondo' : 'tc-frente',
+      tabActiva,
+      campoErrorId,
+    )
     return
   }
 
@@ -343,7 +381,7 @@ async function submit() {
       ciudad: ciudadMunicipio.value.trim(),
       zona: colonia.value.trim(),
       m2Superficie: m2s,
-      m2Construccion: num(m2Construccion),
+      m2Construccion: num(m2Construccion.value),
       habitaciones: 0,
       banos: 0,
       destacado: destacado.value,
@@ -352,7 +390,7 @@ async function submit() {
       tipoVivienda: 'terreno',
       estacionamientos: 0,
       amenidades: buildAmenidades(),
-      cuotaMantenimiento: num(cuotaMantenimiento),
+      cuotaMantenimiento: num(cuotaMantenimiento.value),
       terrenoCampestre,
     }
     const gal = parseLineas(galeriaTexto.value)
@@ -362,9 +400,12 @@ async function submit() {
       principal: archivoPrincipal.value,
       galeria:
         archivosGaleria.value.length > 0 ? archivosGaleria.value : undefined,
+      videos:
+        archivosVideos.value.length > 0 ? archivosVideos.value : undefined,
     })
     if (!r.ok) {
       error.value = r.error
+      await scrollToTerrenoField('tc-tit', tabActiva, campoErrorId)
       return
     }
     await router.push(`/inmuebles/${r.id}`)
@@ -583,7 +624,10 @@ async function submit() {
                       type="text"
                       required
                       maxlength="500"
-                      :class="inputClass"
+                      :class="[
+                        inputClass,
+                        campoErrorId === 'tc-calle' ? inputInvalidClass : '',
+                      ]"
                       placeholder="Ej. Camino Real km 3.5"
                     />
                   </div>
@@ -621,7 +665,10 @@ async function submit() {
                         type="text"
                         required
                         maxlength="200"
-                        :class="inputClass"
+                        :class="[
+                          inputClass,
+                          campoErrorId === 'tc-edo' ? inputInvalidClass : '',
+                        ]"
                       />
                     </div>
                     <div>
@@ -634,7 +681,10 @@ async function submit() {
                         type="text"
                         required
                         maxlength="200"
-                        :class="inputClass"
+                        :class="[
+                          inputClass,
+                          campoErrorId === 'tc-mun' ? inputInvalidClass : '',
+                        ]"
                       />
                     </div>
                   </div>
@@ -647,7 +697,10 @@ async function submit() {
                         type="text"
                         required
                         maxlength="200"
-                        :class="inputClass"
+                        :class="[
+                          inputClass,
+                          campoErrorId === 'tc-col' ? inputInvalidClass : '',
+                        ]"
                       />
                     </div>
                     <div>
@@ -753,7 +806,10 @@ async function submit() {
                         min="1"
                         step="any"
                         required
-                        :class="inputClass"
+                        :class="[
+                          inputClass,
+                          campoErrorId === 'tc-sup' ? inputInvalidClass : '',
+                        ]"
                         :placeholder="
                           unidadSuperficie === 'ha' ? 'Ej. 0.5' : 'Ej. 160'
                         "
@@ -788,7 +844,10 @@ async function submit() {
                           min="1"
                           step="1"
                           required
-                          :class="inputClass"
+                          :class="[
+                            inputClass,
+                            campoErrorId === 'tc-pre' ? inputInvalidClass : '',
+                          ]"
                         />
                       </div>
                       <div>
@@ -823,7 +882,10 @@ async function submit() {
                         type="text"
                         required
                         maxlength="500"
-                        :class="inputClass"
+                        :class="[
+                          inputClass,
+                          campoErrorId === 'tc-tit' ? inputInvalidClass : '',
+                        ]"
                       />
                     </div>
                     <div>
@@ -835,7 +897,10 @@ async function submit() {
                         v-model="descripcion"
                         required
                         rows="4"
-                        :class="inputClass"
+                        :class="[
+                          inputClass,
+                          campoErrorId === 'tc-desc' ? inputInvalidClass : '',
+                        ]"
                       />
                     </div>
                     <div>
@@ -960,7 +1025,10 @@ async function submit() {
                         min="0"
                         step="any"
                         required
-                        :class="inputClass"
+                        :class="[
+                          inputClass,
+                          campoErrorId === 'tc-fondo' ? inputInvalidClass : '',
+                        ]"
                       />
                     </div>
                     <div>
@@ -974,7 +1042,10 @@ async function submit() {
                         min="0"
                         step="any"
                         required
-                        :class="inputClass"
+                        :class="[
+                          inputClass,
+                          campoErrorId === 'tc-frente' ? inputInvalidClass : '',
+                        ]"
                       />
                     </div>
                     <div>
@@ -1048,13 +1119,21 @@ async function submit() {
                     <label :class="labelClass" for="tc-fp"
                       >Foto principal (archivo) <span class="text-rose-400">*</span></label
                     >
-                    <input
-                      id="tc-fp"
-                      type="file"
-                      accept="image/jpeg,image/png,image/webp,image/gif"
-                      class="block w-full cursor-pointer text-xs text-slate-400 file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-white/10 file:px-3 file:py-2 file:text-sm file:text-slate-200 hover:file:bg-white/15"
-                      @change="onPrincipalFile"
-                    />
+                    <div
+                      class="rounded-lg p-0.5 transition-[box-shadow]"
+                      :class="
+                        campoErrorId === 'tc-fp' ? 'ring-2 ring-red-500/50' : ''
+                      "
+                    >
+                      <input
+                        id="tc-fp"
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp,image/gif"
+                        class="block w-full cursor-pointer text-xs text-slate-400 file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-white/10 file:px-3 file:py-2 file:text-sm file:text-slate-200 hover:file:bg-white/15"
+                        @change="onPrincipalFile"
+                      />
+                    </div>
+                    <PreviewPortadaArchivo :url="previewPrincipalUrl" />
                   </div>
                   <div>
                     <label :class="labelClass" for="tc-fg">Galería (archivos)</label>
@@ -1066,6 +1145,7 @@ async function submit() {
                       class="block w-full cursor-pointer text-xs text-slate-400 file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-white/10 file:px-3 file:py-2 file:text-sm file:text-slate-200 hover:file:bg-white/15"
                       @change="onGaleriaFiles"
                     />
+                    <PreviewGaleriaArchivos :items="previewGaleria" />
                   </div>
                   <div>
                     <label :class="labelClass" for="tc-img"
@@ -1102,6 +1182,25 @@ async function submit() {
                       :class="inputClass"
                       placeholder="https://…"
                     />
+                  </div>
+                  <div>
+                    <label :class="labelClass" for="tc-vid-files"
+                      >Videos (archivos, opcional)</label
+                    >
+                    <input
+                      id="tc-vid-files"
+                      type="file"
+                      accept="video/mp4,video/webm,video/quicktime,video/mpeg,video/x-msvideo"
+                      multiple
+                      :class="inputClass"
+                      @change="onVideosFiles"
+                    />
+                    <p
+                      v-if="archivosVideos.length"
+                      class="mt-1 text-[11px] text-slate-500"
+                    >
+                      {{ archivosVideos.length }} archivo(s) seleccionado(s)
+                    </p>
                   </div>
                   <div>
                     <label :class="labelClass" for="tc-plan"

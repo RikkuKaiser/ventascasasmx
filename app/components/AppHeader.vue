@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { useAuthStore } from '~/stores/auth'
 import { useFavoritosStore } from '~/stores/favoritos'
+/** Import por Vite: URL estable en dev/prod (evita fallos con `public/` o `baseURL`). */
+import logoSrc from '~/assets/logo.png'
 
 const auth = useAuthStore()
 const favoritos = useFavoritosStore()
@@ -57,29 +59,34 @@ onUnmounted(() => {
 
 <template>
   <header
-    class="sticky top-0 z-50 border-b border-white/10 bg-night-900/40 pt-[env(safe-area-inset-top)] backdrop-blur-2xl supports-[backdrop-filter]:bg-night-900/30"
+    class="sticky top-0 z-50 overflow-visible border-b border-white/10 bg-night-900/40 pt-[env(safe-area-inset-top)] backdrop-blur-2xl supports-[backdrop-filter]:bg-night-900/30"
   >
     <!-- Móvil: logo + favoritos + menú -->
     <div
-      class="mx-auto flex h-14 max-w-6xl items-center justify-between gap-2 px-3 md:hidden"
+      class="mx-auto flex h-14 max-w-6xl items-center justify-between gap-2 overflow-visible px-3 md:hidden"
     >
       <NuxtLink
         to="/"
-        class="group flex min-w-0 items-center gap-2 font-display text-base font-semibold tracking-tight text-white"
+        class="group relative z-[1] flex min-w-0 shrink-0 items-center gap-2 py-0"
         @click="cerrarMenuMovil"
       >
-        <span
-          class="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-royal-500 to-royal-800 shadow-royal ring-1 ring-white/20"
-        >
-          <span class="text-xs font-bold">L</span>
+        <span class="inline-flex shrink-0 pt-2">
+          <img
+            :src="logoSrc"
+            alt="Ventas Casa Mx"
+            class="relative z-[1] h-20 w-auto max-w-[min(100%,28rem)] shrink-0 object-contain object-left transition-opacity group-hover:opacity-95"
+            width="600"
+            height="300"
+            loading="eager"
+            decoding="async"
+          />
         </span>
-        <span class="truncate">LuxeInmuebles</span>
       </NuxtLink>
 
       <div class="flex shrink-0 items-center gap-0.5">
         <NuxtLink
           to="/favoritos"
-          class="relative rounded-lg p-2 text-slate-400 transition hover:bg-white/5 hover:text-rose-300"
+          class="relative z-[2] rounded-lg p-2 text-slate-400 transition hover:bg-white/5 hover:text-rose-300"
           aria-label="Favoritos"
           @click="cerrarMenuMovil"
         >
@@ -98,7 +105,7 @@ onUnmounted(() => {
         <button
           id="menu-movil-abrir"
           type="button"
-          class="rounded-lg p-2 text-slate-300 transition hover:bg-white/10 hover:text-white"
+          class="relative z-[2] rounded-lg p-2 text-slate-300 transition hover:bg-white/10 hover:text-white"
           :aria-expanded="menuMovilAbierto"
           aria-controls="menu-movil-panel"
           aria-label="Abrir menú de navegación"
@@ -141,22 +148,27 @@ onUnmounted(() => {
 
     <!-- Escritorio -->
     <div
-      class="mx-auto hidden h-14 max-w-6xl items-center justify-between gap-2 px-3 sm:h-16 sm:gap-4 sm:px-4 md:flex"
+      class="mx-auto hidden h-14 max-w-6xl items-center justify-between gap-2 overflow-visible px-3 sm:h-16 sm:gap-4 sm:px-4 md:flex"
     >
       <NuxtLink
         to="/"
-        class="group flex min-w-0 items-center gap-2 font-display text-base font-semibold tracking-tight text-white sm:text-lg"
+        class="group relative z-[1] flex min-w-0 shrink-0 items-center gap-2 py-0"
       >
-        <span
-          class="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-royal-500 to-royal-800 shadow-royal ring-1 ring-white/20 transition group-hover:scale-105 sm:h-9 sm:w-9"
-        >
-          <span class="text-xs font-bold sm:text-sm">L</span>
+        <span class="inline-flex shrink-0 pt-2 sm:pt-2.5">
+          <img
+            :src="logoSrc"
+            alt="Ventas Casa Mx"
+            class="relative z-[1] h-20 w-auto max-w-[min(100%,28rem)] shrink-0 object-contain object-left transition-opacity group-hover:opacity-95 sm:h-24 sm:max-w-[min(100%,34rem)]"
+            width="600"
+            height="300"
+            loading="eager"
+            decoding="async"
+          />
         </span>
-        <span class="truncate sm:whitespace-normal">LuxeInmuebles</span>
       </NuxtLink>
 
       <nav
-        class="flex flex-1 items-center justify-center gap-1"
+        class="relative z-[2] flex flex-1 items-center justify-center gap-1"
         aria-label="Principal"
       >
         <NuxtLink
@@ -174,7 +186,7 @@ onUnmounted(() => {
         </NuxtLink>
       </nav>
 
-      <div class="flex shrink-0 items-center gap-1 sm:gap-2">
+      <div class="relative z-[2] flex shrink-0 items-center gap-1 sm:gap-2">
         <NuxtLink
           to="/favoritos"
           class="relative rounded-lg p-2 text-slate-400 transition hover:bg-white/5 hover:text-rose-300"
