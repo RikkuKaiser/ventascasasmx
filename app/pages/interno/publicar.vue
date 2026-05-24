@@ -1,6 +1,10 @@
 ﻿<script setup lang="ts">
 definePageMeta({ middleware: 'publicador-interno' })
 
+useHead({
+  meta: [{ name: 'robots', content: 'noindex, nofollow' }],
+})
+
 import { useAuthStore } from '~/stores/auth'
 import { useInmueblesStore } from '~/stores/inmuebles'
 import {

@@ -1,9 +1,19 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import {
+  SITE_DESCRIPTION,
+  SITE_NAME,
+  SITE_URL,
+} from './app/constants/site'
+
+const siteUrl = process.env.NUXT_PUBLIC_SITE_URL || SITE_URL
+
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
   runtimeConfig: {
     public: {
+      /** URL pública del front (SEO, canonical, sitemap). */
+      siteUrl,
       /** Backend Nest: http://localhost:3001/api (vacío = solo datos locales) */
       apiBase: process.env.NUXT_PUBLIC_API_BASE || '',
       /** Reservado por si en el futuro integras otra vista con Google Maps JS */
@@ -137,8 +147,9 @@ export default defineNuxtConfig({
   },
   app: {
     head: {
-      title: 'Ventas Casas MX — Inmuebles en México',
-      htmlAttrs: { lang: 'es' },
+      title: `${SITE_NAME} — Inmuebles en México`,
+      titleTemplate: '%s',
+      htmlAttrs: { lang: 'es-MX' },
       meta: [
         {
           name: 'viewport',
@@ -147,10 +158,27 @@ export default defineNuxtConfig({
         },
         {
           name: 'description',
-          content:
-            'Casas, departamentos y terrenos en México. Instala la app en tu celular.',
+          content: SITE_DESCRIPTION,
         },
-        { name: 'application-name', content: 'Ventas Casas MX' },
+        { name: 'robots', content: 'index, follow' },
+        { name: 'googlebot', content: 'index, follow' },
+        ...(process.env.NUXT_PUBLIC_GOOGLE_SITE_VERIFICATION
+          ? [{
+              name: 'google-site-verification',
+              content: process.env.NUXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
+            }]
+          : []),
+        { name: 'application-name', content: SITE_NAME },
+        { property: 'og:type', content: 'website' },
+        { property: 'og:site_name', content: SITE_NAME },
+        { property: 'og:title', content: `${SITE_NAME} — Inmuebles en México` },
+        { property: 'og:description', content: SITE_DESCRIPTION },
+        { property: 'og:url', content: siteUrl },
+        { property: 'og:locale', content: 'es_MX' },
+        { property: 'og:image', content: `${siteUrl.replace(/\/$/, '')}/pwa-512.png` },
+        { name: 'twitter:card', content: 'summary_large_image' },
+        { name: 'twitter:title', content: `${SITE_NAME} — Inmuebles en México` },
+        { name: 'twitter:description', content: SITE_DESCRIPTION },
         { name: 'theme-color', content: '#0a0f1a' },
         { name: 'msapplication-TileColor', content: '#0a0f1a' },
         { name: 'apple-mobile-web-app-capable', content: 'yes' },
@@ -158,7 +186,7 @@ export default defineNuxtConfig({
           name: 'apple-mobile-web-app-status-bar-style',
           content: 'black-translucent',
         },
-        { name: 'apple-mobile-web-app-title', content: 'Ventas Casas MX' },
+        { name: 'apple-mobile-web-app-title', content: SITE_NAME },
         { name: 'mobile-web-app-capable', content: 'yes' },
       ],
       link: [

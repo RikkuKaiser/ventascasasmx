@@ -1,2 +1,11 @@
-User-Agent: *
-Disallow:
+User-agent: *
+Allow: /
+
+Disallow: /interno/
+Disallow: /publicar
+Disallow: /publicar-terrenos
+Disallow: /publicar-terreno-campestre
+Disallow: /broker
+Disallow: /asesores
+
+Sitemap: https://ventascasasmx.store/sitemap.xml
