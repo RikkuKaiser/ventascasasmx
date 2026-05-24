@@ -1,5 +1,5 @@
 <script setup lang="ts">
-useHead({ title: 'Para asesores — LuxeInmuebles' })
+useHead({ title: 'Para asesores — Ventas Casas MX' })
 
 const beneficios = [
   {
@@ -15,7 +15,7 @@ const beneficios = [
   {
     titulo: 'Acompañamiento cercano',
     texto:
-      'Te escuchamos antes de sumarte: alineamos expectativas y forma de colaborar con LuxeInmuebles.',
+      'Te escuchamos antes de sumarte: alineamos expectativas y forma de colaborar con Ventas Casas MX.',
   },
   {
     titulo: 'Herramientas digitales',
@@ -53,7 +53,7 @@ const pasos = [
   {
     n: '4',
     titulo: 'A operar',
-    texto: 'Integras tu operación con el estilo y los procesos de LuxeInmuebles.',
+    texto: 'Integras tu operación con el estilo y los procesos de Ventas Casas MX.',
   },
 ]
 </script>
@@ -82,7 +82,7 @@ const pasos = [
             </h1>
             <p class="mx-auto mt-5 max-w-xl text-lg leading-relaxed text-slate-400 lg:mx-0">
               Ser asesor exige disciplina, herramientas y respaldo. En
-              LuxeInmuebles buscamos perfiles que quieran crecer con un catálogo
+              Ventas Casas MX buscamos perfiles que quieran crecer con un catálogo
               cuidado y un trato transparente con clientes.
             </p>
             <div
@@ -169,7 +169,7 @@ const pasos = [
     <section class="px-4 py-16 md:py-20">
       <div class="mx-auto max-w-6xl">
         <h2 class="text-center font-display text-2xl font-semibold text-white md:text-3xl">
-          Tu camino con LuxeInmuebles
+          Tu camino con Ventas Casas MX
         </h2>
         <p class="mx-auto mt-3 max-w-xl text-center text-sm text-slate-400">
           Cuatro pasos sencillos, siempre con comunicación clara.

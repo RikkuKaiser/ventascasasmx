@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useSolicitudesAsesorStore } from '~/stores/solicitudesAsesor'
 
-useHead({ title: 'Asesores — LuxeInmuebles' })
+useHead({ title: 'Asesores — Ventas Casas MX' })
 
 const solicitudes = useSolicitudesAsesorStore()
 
@@ -242,7 +242,7 @@ async function submit() {
               to="/terminos"
               class="font-medium text-royal-300 hover:text-white"
               @click.stop
-            >Términos y condiciones</NuxtLink>, y que LuxeInmuebles me contacte
+            >Términos y condiciones</NuxtLink>, y que Ventas Casas MX me contacte
             respecto de mi solicitud.
           </span>
         </label>

@@ -22,6 +22,28 @@ export const useAuthStore = defineStore('auth', () => {
 
   const estaAutenticado = computed(() => sesion.value !== null)
 
+  /** Con API configurado, hace falta JWT; sin API basta la sesión local. */
+  const sesionValidaParaApi = computed(() => {
+    if (!sesion.value) return false
+    const base = useApiBase()
+    if (!base) return true
+    return Boolean(sesion.value.accessToken?.trim())
+  })
+
+  function invalidarSesionSiApiRechaza(e: unknown): boolean {
+    const code =
+      typeof e === 'object' && e !== null && 'status' in e
+        ? Number((e as { status: number }).status)
+        : typeof e === 'object' && e !== null && 'statusCode' in e
+          ? Number((e as { statusCode: number }).statusCode)
+          : 0
+    if (code === 401 || code === 403) {
+      cerrarSesion()
+      return true
+    }
+    return false
+  }
+
   function cargarDesdeStorage() {
     if (import.meta.server) return
     try {
@@ -146,6 +168,8 @@ export const useAuthStore = defineStore('auth', () => {
   return {
     sesion,
     estaAutenticado,
+    sesionValidaParaApi,
+    invalidarSesionSiApiRechaza,
     cargarDesdeStorage,
     registrar,
     iniciarSesion,

@@ -2,7 +2,7 @@
 import { useAuthStore } from '~/stores/auth'
 import { useFavoritosStore } from '~/stores/favoritos'
 
-useHead({ title: 'Entrar — LuxeInmuebles' })
+useHead({ title: 'Entrar — Ventas Casas MX' })
 
 const auth = useAuthStore()
 const router = useRouter()

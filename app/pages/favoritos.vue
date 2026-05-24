@@ -4,7 +4,7 @@ import type { Inmueble } from '~/types'
 import { useFavoritosStore } from '~/stores/favoritos'
 import { useInmueblesStore } from '~/stores/inmuebles'
 
-useHead({ title: 'Favoritos — LuxeInmuebles' })
+useHead({ title: 'Favoritos — Ventas Casas MX' })
 
 const favoritos = useFavoritosStore()
 const { ids } = storeToRefs(favoritos)

@@ -34,7 +34,7 @@ function salir() {
       <div
         class="mx-auto max-w-6xl px-4 text-center text-sm text-slate-500"
       >
-        <p class="font-display text-slate-400">LuxeInmuebles</p>
+        <p class="font-display text-slate-400">Ventas Casas MX</p>
         <p class="mt-1">Anuncia y descubre inmuebles con estilo.</p>
         <p class="mt-4">
           <NuxtLink
@@ -59,13 +59,6 @@ function salir() {
           <span class="text-slate-700" aria-hidden="true">·</span>
           <NuxtLink to="/publicar" class="transition hover:text-royal-300">
             Publicar
-          </NuxtLink>
-          <span class="text-slate-700" aria-hidden="true">·</span>
-          <NuxtLink
-            to="/publicar-terrenos"
-            class="transition hover:text-royal-300"
-          >
-            Terrenos
           </NuxtLink>
           <span class="text-slate-700" aria-hidden="true">·</span>
           <NuxtLink to="/favoritos" class="transition hover:text-royal-300">

@@ -12,7 +12,6 @@ const links = [
   { to: '/', label: 'Inicio' },
   { to: '/inmuebles', label: 'Inmuebles' },
   { to: '/publicar', label: 'Publicar' },
-  { to: '/publicar-terrenos', label: 'Terrenos' },
   { to: '/broker', label: 'Para asesores' },
 ]
 
@@ -20,7 +19,6 @@ const menuMovilAbierto = ref(false)
 
 function isActive(path: string) {
   if (path === '/') return route.path === '/'
-  /** Evita que "Publicar" quede activo en `/publicar-terrenos`. */
   if (path === '/publicar') return route.path === '/publicar'
   return route.path.startsWith(path)
 }
@@ -73,7 +71,7 @@ onUnmounted(() => {
         <span class="inline-flex shrink-0 pt-2">
           <img
             :src="logoSrc"
-            alt="Ventas Casa Mx"
+            alt="Ventas Casas MX"
             class="relative z-[1] h-20 w-auto max-w-[min(100%,28rem)] shrink-0 object-contain object-left transition-opacity group-hover:opacity-95"
             width="600"
             height="300"
@@ -157,7 +155,7 @@ onUnmounted(() => {
         <span class="inline-flex shrink-0 pt-2 sm:pt-2.5">
           <img
             :src="logoSrc"
-            alt="Ventas Casa Mx"
+            alt="Ventas Casas MX"
             class="relative z-[1] h-20 w-auto max-w-[min(100%,28rem)] shrink-0 object-contain object-left transition-opacity group-hover:opacity-95 sm:h-24 sm:max-w-[min(100%,34rem)]"
             width="600"
             height="300"

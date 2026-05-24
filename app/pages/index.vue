@@ -2,7 +2,7 @@
 import { useInmueblesStore } from '~/stores/inmuebles'
 
 const inmuebles = useInmueblesStore()
-useHead({ title: 'Inicio — LuxeInmuebles' })
+useHead({ title: 'Inicio — Ventas Casas MX' })
 </script>
 
 <template>

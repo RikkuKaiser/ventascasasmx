@@ -8,7 +8,7 @@ export function useWhatsApp() {
   const defaultMessage = computed(() =>
     String(
       config.public.whatsappDefaultMessage
-      ?? 'Hola, me gustaría recibir más información sobre LuxeInmuebles.',
+      ?? 'Hola, me gustaría recibir más información sobre Ventas Casas MX.',
     ),
   )
 

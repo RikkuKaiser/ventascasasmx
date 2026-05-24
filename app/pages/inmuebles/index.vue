@@ -3,7 +3,7 @@ import type { Inmueble } from '~/types'
 import { useInmueblesStore } from '~/stores/inmuebles'
 
 const inmuebles = useInmueblesStore()
-useHead({ title: 'Inmuebles — LuxeInmuebles' })
+useHead({ title: 'Inmuebles — Ventas Casas MX' })
 
 const busqueda = ref('')
 const ciudad = ref('')

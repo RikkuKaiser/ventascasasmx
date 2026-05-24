@@ -1,8 +1,8 @@
 <script setup lang="ts">
-/** Ruta anterior: redirige a Terrenos. */
+/** Ruta anterior: redirige al formulario unificado con tipo terreno. */
 const route = useRoute()
 await navigateTo(
-  { path: '/publicar-terrenos', query: route.query },
+  { path: '/publicar', query: { ...route.query, tipo: 'terreno' } },
   { replace: true },
 )
 </script>

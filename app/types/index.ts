@@ -1,3 +1,5 @@
+export type OperacionInmueble = 'venta' | 'renta'
+
 export type TipoVivienda =
   | 'casa'
   | 'casa_residencial'
@@ -28,7 +30,7 @@ export interface TerrenoServiciosDetalle {
 
 /** Datos extendidos guardados en `terreno_campestre` (columna JSON en API). */
 export interface TerrenoCampestreDetalle {
-  operacion?: 'venta' | 'renta' | 'proyecto'
+  operacion?: OperacionInmueble | 'proyecto'
   /** Código del select "Subtítulo de inmueble" en /publicar-terrenos */
   subtipo?:
     | 'terreno_comercial'
@@ -109,6 +111,8 @@ export interface Inmueble {
   amenidades: string[]
   /** Cuota de mantenimiento mensual en la moneda del inmueble; 0 si no aplica */
   cuotaMantenimiento: number
+  /** venta | renta — columna API; null histórico → venta */
+  operacion?: OperacionInmueble
   /** Presente si se publicó con el formulario de terreno campestre (u otro terreno extendido). */
   terrenoCampestre?: TerrenoCampestreDetalle
   /** Dirección ampliada / mapa / video (formulario publicar inmueble). */
@@ -119,6 +123,7 @@ export interface Inmueble {
 
 /** JSON `publicacion_inmueble` en API. */
 export interface PublicacionInmuebleDetalle {
+  operacion?: OperacionInmueble
   calleNumero?: string
   estado?: string
   cp?: string
@@ -130,6 +135,19 @@ export interface PublicacionInmuebleDetalle {
   videos?: string[]
   planosUrl?: string
   notas?: string
+}
+
+/** Venta o renta según columna API, JSON extendido o etiquetas del anuncio. */
+export function operacionInmueble(i: Inmueble): OperacionInmueble {
+  if (i.operacion === 'renta') return 'renta'
+  if (i.operacion === 'venta') return 'venta'
+  const op = i.terrenoCampestre?.operacion ?? i.publicacionInmueble?.operacion
+  if (op === 'renta') return 'renta'
+  if (op === 'venta') return 'venta'
+  const tags = i.etiquetas.map((t) => t.trim().toLowerCase())
+  if (tags.includes('renta')) return 'renta'
+  if (tags.includes('venta')) return 'venta'
+  return 'venta'
 }
 
 export interface Comentario {

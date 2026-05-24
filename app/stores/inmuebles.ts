@@ -3,6 +3,41 @@ import { defineStore } from 'pinia'
 import type { Inmueble } from '~/types'
 import { useAuthStore } from '~/stores/auth'
 
+/** Texto útil para el usuario cuando falla POST /inmuebles o /con-fotos. */
+function mensajeErrorPublicarApi(e: unknown): string {
+  const gen = 'No se pudo publicar. Revisa los datos o tu conexión.'
+  if (!e || typeof e !== 'object')
+    return gen
+  const x = e as {
+    statusCode?: number
+    status?: number
+    data?: unknown
+    message?: string
+  }
+  const code = x.statusCode ?? x.status
+  const d = x.data
+  if (typeof d === 'string' && d.trim())
+    return d.length > 500 ? `${d.slice(0, 500)}…` : d
+  if (d && typeof d === 'object') {
+    const o = d as { message?: unknown; error?: string }
+    if (Array.isArray(o.message))
+      return o.message.map(String).join('. ')
+    if (typeof o.message === 'string' && o.message.trim())
+      return o.message
+    if (typeof o.error === 'string' && o.error.trim())
+      return o.error
+  }
+  if (code === 401 || code === 403)
+    return 'Sesión inválida o sin permiso. Vuelve a iniciar sesión.'
+  if (code === 413)
+    return 'Uno de los archivos es demasiado grande para el servidor.'
+  if (code === 400 && typeof x.message === 'string' && x.message !== 'Bad Request')
+    return x.message
+  if (typeof code === 'number')
+    return `${gen} (HTTP ${code})`
+  return gen
+}
+
 const demo: Inmueble[] = [
   {
     id: 1,
@@ -434,12 +469,11 @@ export const useInmueblesStore = defineStore('inmuebles', () => {
         }
         await sincronizarDesdeApi()
         return { ok: true, id: String(created.id) }
-      } catch {
-        return {
-          ok: false,
-          error:
-            'No se pudo publicar. Revisa los datos, tu conexión o vuelve a iniciar sesión.',
-        }
+      } catch (e: unknown) {
+        if (import.meta.dev)
+          console.error('[publicarInmueble]', e)
+        auth.invalidarSesionSiApiRechaza(e)
+        return { ok: false, error: mensajeErrorPublicarApi(e) }
       }
     }
     const nextId

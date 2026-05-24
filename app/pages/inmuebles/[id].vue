@@ -24,8 +24,8 @@ const fotosGaleria = computed(() => {
 
 useHead(() => ({
   title: inmueble.value
-    ? `${inmueble.value.titulo} — LuxeInmuebles`
-    : 'Inmueble — LuxeInmuebles',
+    ? `${inmueble.value.titulo} — Ventas Casas MX`
+    : 'Inmueble — Ventas Casas MX',
 }))
 </script>
 

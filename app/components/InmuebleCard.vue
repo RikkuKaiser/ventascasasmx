@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import type { Inmueble } from '~/types'
+import { operacionInmueble } from '~/types'
 import { useInmueblesStore } from '~/stores/inmuebles'
 
 const props = defineProps<{ inmueble: Inmueble }>()
 const store = useInmueblesStore()
 
 const esTerreno = computed(() => props.inmueble.tipoVivienda === 'terreno')
+const esRenta = computed(() => operacionInmueble(props.inmueble) === 'renta')
 
 const rawM2 = computed(() => props.inmueble as Inmueble & { m2?: number })
 const m2Sup = computed(
@@ -22,6 +24,13 @@ const mostrarVerMas = computed(
 )
 
 const descripcionExpandida = ref(false)
+
+/** Sin duplicar el listón Venta/Renta en chips inferiores. */
+const etiquetasVisibles = computed(() =>
+  props.inmueble.etiquetas
+    .filter((t) => !/^(venta|renta)$/i.test(t.trim()))
+    .slice(0, 3),
+)
 
 watch(
   () => props.inmueble.id,
@@ -45,18 +54,13 @@ watch(
       <div
         class="absolute inset-0 bg-gradient-to-t from-night-950 via-night-950/20 to-transparent"
       />
+      <InmuebleOperacionListon :inmueble="inmueble" />
       <div class="absolute right-3 top-3 z-10">
         <FavoritoBoton :inmueble-id="inmueble.id" />
       </div>
-      <div
-        v-if="inmueble.destacado"
-        class="absolute left-3 top-3 rounded-full bg-royal-600/90 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-white shadow-royal backdrop-blur-md"
-      >
-        Destacado
-      </div>
       <div class="absolute bottom-3 left-3 right-3 flex flex-wrap gap-1.5">
         <span
-          v-for="tag in inmueble.etiquetas.slice(0, 3)"
+          v-for="tag in etiquetasVisibles"
           :key="tag"
           class="rounded-md bg-black/40 px-2 py-0.5 text-[11px] font-medium text-slate-200 backdrop-blur-md"
         >
@@ -167,7 +171,12 @@ watch(
         </div>
         <div class="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
           <p class="font-display text-lg font-semibold text-gradient-royal">
-            {{ store.formatearPrecio(inmueble) }}
+            {{ store.formatearPrecio(inmueble) }}<span
+              v-if="esRenta"
+              class="text-sm font-medium text-slate-400"
+            >
+              / mes</span
+            >
           </p>
           <div class="flex flex-wrap items-center justify-end gap-2">
             <WhatsAppInmuebleCta variante="card" :inmueble="inmueble" />

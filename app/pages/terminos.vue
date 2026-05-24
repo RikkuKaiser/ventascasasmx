@@ -2,12 +2,12 @@
 const config = useRuntimeConfig()
 
 useHead({
-  title: 'Términos y condiciones — LuxeInmuebles',
+  title: 'Términos y condiciones — Ventas Casas MX',
   meta: [
     {
       name: 'description',
       content:
-        'Términos y condiciones de uso del sitio LuxeInmuebles.',
+        'Términos y condiciones de uso del sitio Ventas Casas MX.',
     },
   ],
 })
@@ -16,12 +16,12 @@ useHead({
 <template>
   <LegalPageShell
     title="Términos y condiciones"
-    descripcion="Condiciones generales de uso de la plataforma LuxeInmuebles."
+    descripcion="Condiciones generales de uso de la plataforma Ventas Casas MX."
   >
     <section>
       <h2>1. Identificación</h2>
       <p>
-        El sitio web LuxeInmuebles (en adelante, el «Sitio») es operado con fines
+        El sitio web Ventas Casas MX (en adelante, el «Sitio») es operado con fines
         de exhibición de inmuebles y servicios relacionados. Al acceder o
         utilizar el Sitio, declaras haber leído y aceptado estos Términos y
         Condiciones, así como nuestro
@@ -51,7 +51,7 @@ useHead({
         </li>
         <li>
           No usar el Sitio para spam, suplantación de identidad o actividades
-          comerciales no autorizadas por LuxeInmuebles.
+          comerciales no autorizadas por Ventas Casas MX.
         </li>
       </ul>
     </section>
@@ -59,7 +59,7 @@ useHead({
       <h2>4. Cuenta de usuario</h2>
       <p>
         Si te registras, eres responsable de la veracidad de tus datos y de la
-        confidencialidad de tu contraseña. LuxeInmuebles podrá suspender o
+        confidencialidad de tu contraseña. Ventas Casas MX podrá suspender o
         cancelar cuentas que incumplan estos términos o el Aviso de privacidad.
       </p>
     </section>
@@ -74,7 +74,7 @@ useHead({
     <section>
       <h2>6. Limitación de responsabilidad</h2>
       <p>
-        El Sitio y sus funciones se ofrecen «tal cual». LuxeInmuebles no garantiza
+        El Sitio y sus funciones se ofrecen «tal cual». Ventas Casas MX no garantiza
         la exactitud absoluta de cada dato de inmueble ni la continuidad
         ininterrumpida del servicio. En la medida en que lo permita la ley
         aplicable, no seremos responsables por daños indirectos o lucro cesante
@@ -86,7 +86,7 @@ useHead({
       <p>
         El Sitio puede incluir enlaces a sitios o servicios de terceros (por
         ejemplo, mensajería). Esos sitios tienen sus propias políticas;
-        LuxeInmuebles no controla ni responde por su contenido.
+        Ventas Casas MX no controla ni responde por su contenido.
       </p>
     </section>
     <section>
@@ -113,7 +113,7 @@ useHead({
         Para dudas sobre estos Términos o el tratamiento de datos personales,
         escríbenos a
         <a
-          :href="`mailto:${config.public.privacidadEmail}?subject=Consulta%20T%C3%A9rminos%20LuxeInmuebles`"
+          :href="`mailto:${config.public.privacidadEmail}?subject=Consulta%20T%C3%A9rminos%20Ventas Casas MX`"
         >{{ config.public.privacidadEmail }}</a>.
         También puedes usar los canales habilitados en el Sitio (por ejemplo,
         WhatsApp), si están disponibles.

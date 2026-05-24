@@ -2,12 +2,12 @@
 const config = useRuntimeConfig()
 
 useHead({
-  title: 'Aviso de privacidad — LuxeInmuebles',
+  title: 'Aviso de privacidad — Ventas Casas MX',
   meta: [
     {
       name: 'description',
       content:
-        'Aviso de privacidad integral de LuxeInmuebles conforme a la LFPDPPP.',
+        'Aviso de privacidad integral de Ventas Casas MX conforme a la LFPDPPP.',
     },
   ],
 })
@@ -16,12 +16,12 @@ useHead({
 <template>
   <LegalPageShell
     title="Aviso de privacidad"
-    descripcion="Información sobre el tratamiento de datos personales en LuxeInmuebles."
+    descripcion="Información sobre el tratamiento de datos personales en Ventas Casas MX."
   >
     <section>
       <h2>1. Responsable del tratamiento</h2>
       <p>
-        LuxeInmuebles, en su carácter de responsable del Sitio, trata datos
+        Ventas Casas MX, en su carácter de responsable del Sitio, trata datos
         personales conforme a la Ley Federal de Protección de Datos Personales en
         Posesión de los Particulares (LFPDPPP) y demás normativa aplicable en
         México.

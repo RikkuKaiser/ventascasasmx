@@ -32,8 +32,8 @@ export const useFavoritosStore = defineStore('favoritos', () => {
       })
       ids.value = res.ids
       guardar()
-    } catch {
-      /* ignore */
+    } catch (e: unknown) {
+      auth.invalidarSesionSiApiRechaza(e)
     }
   }
 

@@ -33,7 +33,7 @@ const mensaje = computed(() => {
   const metros = partesMetro.join(' · ')
 
   const lineas = [
-    'Hola, me interesa el siguiente inmueble en LuxeInmuebles:',
+    'Hola, me interesa el siguiente inmueble en Ventas Casas MX:',
     '',
     i.titulo,
     `${i.ciudad} · ${i.zona}`,

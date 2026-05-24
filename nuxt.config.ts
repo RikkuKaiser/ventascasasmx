@@ -12,17 +12,17 @@ export default defineNuxtConfig({
       whatsappPhone: process.env.NUXT_PUBLIC_WHATSAPP_PHONE || '',
       whatsappDefaultMessage:
         process.env.NUXT_PUBLIC_WHATSAPP_MESSAGE
-        || 'Hola, me gustaría recibir más información sobre LuxeInmuebles.',
+        || 'Hola, me gustaría recibir más información sobre Ventas Casas MX.',
       /** Correo para ARCO, privacidad y consultas legales (páginas legales) */
       privacidadEmail:
-        process.env.NUXT_PUBLIC_PRIVACIDAD_EMAIL || 'privacidad@luxeinmuebles.com',
+        process.env.NUXT_PUBLIC_PRIVACIDAD_EMAIL || 'privacidad@ventascasasmx.com',
       /** Domicilio para oír y recibir notificaciones del responsable */
       responsableDomicilio:
         process.env.NUXT_PUBLIC_RESPONSABLE_DOMICILIO
         || 'Calle Ejemplo 100, Col. Centro, Alcaldía Cuauhtémoc, Ciudad de México, CDMX, C.P. 06000, México',
       /** Razón social o nombre comercial del responsable (opcional) */
       responsableNombre:
-        process.env.NUXT_PUBLIC_RESPONSABLE_NOMBRE || 'LuxeInmuebles',
+        process.env.NUXT_PUBLIC_RESPONSABLE_NOMBRE || 'Ventas Casas MX',
     },
   },
   modules: ['@pinia/nuxt', '@nuxtjs/tailwindcss', '@vite-pwa/nuxt'],
@@ -39,8 +39,8 @@ export default defineNuxtConfig({
     strategies: 'generateSW',
     manifest: {
       id: '/',
-      name: 'Ventas Casa Mx',
-      short_name: 'Ventas Casa',
+      name: 'Ventas Casas MX',
+      short_name: 'Ventas Casas',
       description:
         'Anuncia y descubre casas, departamentos y terrenos en México. Funciona instalada como app.',
       lang: 'es-MX',
@@ -144,7 +144,7 @@ export default defineNuxtConfig({
   },
   app: {
     head: {
-      title: 'Ventas Casa Mx — Inmuebles en México',
+      title: 'Ventas Casas MX — Inmuebles en México',
       htmlAttrs: { lang: 'es' },
       meta: [
         {
@@ -157,7 +157,7 @@ export default defineNuxtConfig({
           content:
             'Casas, departamentos y terrenos en México. Instala la app en tu celular.',
         },
-        { name: 'application-name', content: 'Ventas Casa Mx' },
+        { name: 'application-name', content: 'Ventas Casas MX' },
         { name: 'theme-color', content: '#0a0f1a' },
         { name: 'msapplication-TileColor', content: '#0a0f1a' },
         { name: 'apple-mobile-web-app-capable', content: 'yes' },
@@ -165,7 +165,7 @@ export default defineNuxtConfig({
           name: 'apple-mobile-web-app-status-bar-style',
           content: 'black-translucent',
         },
-        { name: 'apple-mobile-web-app-title', content: 'Ventas Casa Mx' },
+        { name: 'apple-mobile-web-app-title', content: 'Ventas Casas MX' },
         { name: 'mobile-web-app-capable', content: 'yes' },
       ],
       link: [
