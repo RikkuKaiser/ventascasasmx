@@ -36,14 +36,7 @@ function salir() {
       >
         <p class="font-display text-slate-400">Ventas Casas MX</p>
         <p class="mt-1">Anuncia y descubre inmuebles con estilo.</p>
-        <p class="mt-4">
-          <NuxtLink
-            to="/broker"
-            class="text-royal-400 transition hover:text-royal-200"
-          >
-            Colabora como asesor
-          </NuxtLink>
-        </p>
+        <RedesSociales />
 
         <nav
           class="mt-8 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 border-t border-white/5 pt-6 text-xs text-slate-500 md:hidden"
@@ -57,19 +50,11 @@ function salir() {
             Inmuebles
           </NuxtLink>
           <span class="text-slate-700" aria-hidden="true">·</span>
-          <NuxtLink to="/publicar" class="transition hover:text-royal-300">
-            Publicar
-          </NuxtLink>
-          <span class="text-slate-700" aria-hidden="true">·</span>
           <NuxtLink to="/favoritos" class="transition hover:text-royal-300">
             Favoritos
             <template v-if="favoritos.cantidad > 0">
               ({{ favoritos.cantidad > 9 ? '9+' : favoritos.cantidad }})
             </template>
-          </NuxtLink>
-          <span class="text-slate-700" aria-hidden="true">·</span>
-          <NuxtLink to="/asesores" class="transition hover:text-royal-300">
-            Asesores
           </NuxtLink>
           <template v-if="auth.estaAutenticado">
             <span class="text-slate-700" aria-hidden="true">·</span>

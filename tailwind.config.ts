@@ -30,6 +30,15 @@ export default {
           900: '#0f1f45',
           950: '#0a1530',
         },
+        /** Coral para botones CTA */
+        accent: {
+          400: '#fb923c',
+          500: '#f97316',
+          600: '#ea580c',
+          700: '#c2410c',
+          800: '#9a3412',
+          950: '#431407',
+        },
         night: {
           950: '#05080f',
           900: '#0a0f1a',
@@ -50,6 +59,7 @@ export default {
         'glass-lg':
           '0 24px 64px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08)',
         royal: '0 0 40px rgba(40, 74, 158, 0.35)',
+        cta: '0 0 32px rgba(249, 115, 22, 0.32), 0 4px 12px rgba(0, 0, 0, 0.22)',
       },
       animation: {
         'fade-up': 'fadeUp 0.7s ease-out forwards',

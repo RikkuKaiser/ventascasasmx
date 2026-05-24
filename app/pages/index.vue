@@ -19,26 +19,24 @@ useHead({ title: 'Inicio — Ventas Casas MX' })
               Colección destacada
             </h2>
             <p class="mt-2 max-w-xl text-slate-400">
-              Tarjetas en vidrio oscuro y acentos azul rey para que cada
-              propiedad se sienta exclusiva.
+              Propiedades en venta y renta, con fichas claras y fotos de calidad.
             </p>
           </div>
-          <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <NuxtLink
-              to="/publicar"
-              class="text-sm font-medium text-slate-300 hover:text-white"
-            >
-              Publicar inmueble
-            </NuxtLink>
-            <NuxtLink
-              to="/inmuebles"
-              class="text-sm font-medium text-royal-300 hover:text-white"
-            >
-              Ver todos →
-            </NuxtLink>
-          </div>
+          <NuxtLink
+            to="/inmuebles"
+            class="text-sm font-medium text-royal-300 hover:text-white"
+          >
+            Ver todos →
+          </NuxtLink>
         </div>
         <div
+          v-if="inmuebles.destacados.length === 0"
+          class="mt-10 rounded-2xl border border-dashed border-white/15 py-12 text-center text-slate-400"
+        >
+          Aún no hay propiedades destacadas en el catálogo.
+        </div>
+        <div
+          v-else
           class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
         >
           <InmuebleCard

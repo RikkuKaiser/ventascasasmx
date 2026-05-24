@@ -37,7 +37,7 @@ const guardados = computed(() =>
         </p>
         <NuxtLink
           to="/inmuebles"
-          class="mt-6 inline-block rounded-xl bg-gradient-to-r from-royal-600 to-royal-800 px-6 py-3 text-sm font-semibold text-white shadow-royal"
+          class="mt-6 inline-block rounded-xl btn-cta px-6 py-3 text-sm"
         >
           Explorar catálogo
         </NuxtLink>

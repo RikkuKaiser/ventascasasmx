@@ -115,7 +115,7 @@ useHead(() => ({
             </NuxtLink>
             <NuxtLink
               to="#comentarios"
-              class="mt-3 block w-full rounded-xl bg-gradient-to-r from-royal-600 to-royal-800 py-2.5 text-center text-sm font-semibold text-white shadow-royal ring-1 ring-white/15"
+              class="mt-3 block w-full rounded-xl btn-cta py-2.5 text-center text-sm"
             >
               Ver comentarios y opinar
             </NuxtLink>
@@ -136,7 +136,7 @@ useHead(() => ({
           <div class="flex min-w-0 items-stretch">
             <NuxtLink
               to="#comentarios"
-              class="flex h-11 w-full min-w-0 items-center justify-center rounded-xl bg-gradient-to-r from-royal-600 to-royal-800 px-1.5 text-center text-xs font-semibold leading-tight text-white shadow-royal sm:text-sm"
+              class="flex h-11 w-full min-w-0 items-center justify-center rounded-xl btn-cta px-1.5 text-center text-xs leading-tight sm:text-sm"
             >
               Comentarios
             </NuxtLink>
@@ -151,7 +151,7 @@ useHead(() => ({
       <p class="mt-2 text-slate-400">El identificador no coincide con ninguna propiedad.</p>
       <NuxtLink
         to="/inmuebles"
-        class="mt-6 inline-block rounded-xl bg-royal-700 px-5 py-2.5 text-sm font-medium text-white"
+        class="mt-6 inline-block rounded-xl btn-cta px-5 py-2.5 text-sm font-medium"
       >
         Ir al catálogo
       </NuxtLink>

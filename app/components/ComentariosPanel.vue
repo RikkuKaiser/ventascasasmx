@@ -75,7 +75,7 @@ function fechaLegible(iso: string) {
       <p v-if="error" class="mt-2 text-sm text-red-400">{{ error }}</p>
       <button
         type="button"
-        class="mt-3 rounded-xl bg-gradient-to-r from-royal-600 to-royal-800 px-5 py-2.5 text-sm font-semibold text-white shadow-royal ring-1 ring-white/15 transition hover:brightness-110"
+        class="mt-3 rounded-xl btn-cta px-5 py-2.5 text-sm"
         @click="enviar"
       >
         Publicar comentario

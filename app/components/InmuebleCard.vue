@@ -182,7 +182,7 @@ watch(
             <WhatsAppInmuebleCta variante="card" :inmueble="inmueble" />
             <NuxtLink
               :to="`/inmuebles/${inmueble.id}`"
-              class="inline-flex h-8 shrink-0 items-center gap-1 rounded-lg bg-gradient-to-r from-royal-600 to-royal-800 px-3 text-sm font-semibold text-white shadow-royal ring-1 ring-white/20 transition hover:brightness-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-night-950"
+              class="inline-flex h-8 shrink-0 items-center gap-1 rounded-lg btn-cta px-3 text-sm"
             >
               Ver detalle
               <svg

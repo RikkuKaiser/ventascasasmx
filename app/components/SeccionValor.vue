@@ -1,16 +1,28 @@
+<script setup lang="ts">
+import { useInmueblesStore } from '~/stores/inmuebles'
+
+const inmuebles = useInmueblesStore()
+
+const totalAltas = computed(() => inmuebles.lista.length)
+
+const totalFormateado = computed(() =>
+  new Intl.NumberFormat('es-MX').format(totalAltas.value),
+)
+</script>
+
 <template>
   <section class="border-y border-white/5 bg-night-850/30 px-4 py-12 backdrop-blur-sm sm:py-14 md:py-16">
     <div class="mx-auto max-w-6xl">
       <div class="grid gap-8 md:grid-cols-3 md:gap-10">
         <div class="text-center">
           <p class="font-display text-3xl font-semibold text-gradient-royal sm:text-4xl md:text-5xl">
-            +120
+            {{ totalFormateado }}
           </p>
           <p class="mt-2 text-sm font-medium uppercase tracking-wider text-royal-300">
-            Inmuebles premium
+            Inmuebles en catálogo
           </p>
           <p class="mt-2 text-sm text-slate-500">
-            Fichas con fotos de calidad y datos claros.
+            Propiedades dadas de alta y disponibles para consultar.
           </p>
         </div>
         <div class="text-center">
@@ -46,8 +58,7 @@
             Te acompañamos de la oferta a las llaves
           </h2>
           <p class="mt-3 text-sm leading-relaxed text-slate-400 md:max-w-xl">
-            Asesoría integral para vender o comprar con respaldo jurídico y un
-            proceso ordenado hasta la entrega del inmueble.
+            Encontraras terrenos, casas usadas y/o nuevas, con documentación 100% verificada, respaldo jurídico. Comprar con certeza, no con incertidumbre.
           </p>
         </div>
 

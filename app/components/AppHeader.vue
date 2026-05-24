@@ -8,18 +8,22 @@ const auth = useAuthStore()
 const favoritos = useFavoritosStore()
 const route = useRoute()
 
-const links = [
-  { to: '/', label: 'Inicio' },
-  { to: '/inmuebles', label: 'Inmuebles' },
-  { to: '/publicar', label: 'Publicar' },
-  { to: '/broker', label: 'Para asesores' },
-]
+const links = computed(() => {
+  const items = [
+    { to: '/', label: 'Inicio' },
+    { to: '/inmuebles', label: 'Inmuebles' },
+  ]
+  if (auth.puedePublicarInmuebles) {
+    items.push({ to: '/interno/publicar', label: 'Publicar' })
+  }
+  return items
+})
 
 const menuMovilAbierto = ref(false)
 
 function isActive(path: string) {
   if (path === '/') return route.path === '/'
-  if (path === '/publicar') return route.path === '/publicar'
+  if (path === '/interno/publicar') return route.path === '/interno/publicar'
   return route.path.startsWith(path)
 }
 
@@ -225,7 +229,7 @@ onUnmounted(() => {
           </NuxtLink>
           <NuxtLink
             to="/registro"
-            class="inline-flex items-center rounded-lg bg-gradient-to-r from-royal-600 to-royal-800 px-3 py-2 text-sm font-medium text-white shadow-royal ring-1 ring-white/20 transition hover:brightness-110 sm:px-4"
+            class="inline-flex items-center rounded-lg btn-cta px-3 py-2 text-sm font-medium sm:px-4"
           >
             Registrarse
           </NuxtLink>
@@ -314,7 +318,7 @@ onUnmounted(() => {
                 </NuxtLink>
                 <NuxtLink
                   to="/registro"
-                  class="block w-full rounded-xl bg-gradient-to-r from-royal-600 to-royal-800 py-3 text-center text-sm font-semibold text-white shadow-royal ring-1 ring-white/15"
+                  class="block w-full rounded-xl btn-cta py-3 text-center text-sm"
                   @click="cerrarMenuMovil"
                 >
                   Registrarse

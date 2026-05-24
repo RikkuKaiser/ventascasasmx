@@ -16,24 +16,22 @@ const featured = computed(() => inmuebles.destacados[0])
             <span
               class="h-1.5 w-1.5 animate-shimmer rounded-full bg-royal-400"
             />
-            Anuncia tu propiedad
+            Venta y renta en México
           </p>
           <h1
             class="mt-5 font-display text-3xl font-semibold leading-tight text-white sm:mt-6 sm:text-4xl md:text-5xl lg:text-[3.25rem]"
           >
-            Inmuebles que
-            <span class="text-gradient-royal">brillan</span>
-            en vidrio y azul rey
+            Descubre inmuebles en
+            <span class="text-gradient-royal">México</span>
           </h1>
           <p class="mt-4 max-w-xl text-base leading-relaxed text-slate-400 sm:mt-5 sm:text-lg">
-            Presenta cada espacio con una estética oscura, cristalina y
-            premium. Los visitantes exploran, se enamoran y dejan su voz —
-            solo si están registrados.
+            Casas, departamentos y terrenos en venta o renta. Explora nuestro
+            catálogo y encuentra la propiedad ideal.
           </p>
           <div class="mt-6 flex w-full max-w-md flex-col gap-3 sm:mt-8 sm:max-w-none sm:flex-row sm:flex-wrap">
             <NuxtLink
               to="/inmuebles"
-              class="flex min-h-[44px] items-center justify-center rounded-xl bg-gradient-to-r from-royal-600 to-royal-900 px-6 py-3 text-center text-sm font-semibold text-white shadow-royal ring-1 ring-white/20 transition hover:brightness-110 sm:inline-flex sm:w-auto"
+              class="flex min-h-[44px] items-center justify-center rounded-xl btn-cta px-6 py-3 text-center text-sm sm:inline-flex sm:w-auto"
             >
               Ver catálogo
             </NuxtLink>

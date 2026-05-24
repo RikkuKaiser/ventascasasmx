@@ -79,7 +79,7 @@ async function submit() {
         <p v-if="error" class="text-sm text-red-400">{{ error }}</p>
         <button
           type="submit"
-          class="w-full rounded-xl bg-gradient-to-r from-royal-600 to-royal-800 py-3 text-sm font-semibold text-white shadow-royal ring-1 ring-white/15 transition hover:brightness-110"
+          class="w-full rounded-xl btn-cta py-3 text-sm"
         >
           Entrar
         </button>

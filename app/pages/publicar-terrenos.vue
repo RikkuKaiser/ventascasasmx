@@ -2,7 +2,7 @@
 /** Ruta anterior: redirige al formulario unificado con tipo terreno. */
 const route = useRoute()
 await navigateTo(
-  { path: '/publicar', query: { ...route.query, tipo: 'terreno' } },
+  { path: '/interno/publicar', query: { ...route.query, tipo: 'terreno' } },
   { replace: true },
 )
 </script>

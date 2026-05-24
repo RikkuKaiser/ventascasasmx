@@ -72,13 +72,6 @@ export default defineNuxtConfig({
           icons: [{ src: 'pwa-192.png', sizes: '192x192', type: 'image/png' }],
         },
         {
-          name: 'Publicar',
-          short_name: 'Publicar',
-          url: '/publicar',
-          description: 'Publicar un inmueble',
-          icons: [{ src: 'pwa-192.png', sizes: '192x192', type: 'image/png' }],
-        },
-        {
           name: 'Favoritos',
           short_name: 'Favoritos',
           url: '/favoritos',

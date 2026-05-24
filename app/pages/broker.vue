@@ -90,7 +90,7 @@ const pasos = [
             >
               <NuxtLink
                 to="/asesores#agent-form"
-                class="rounded-xl bg-gradient-to-r from-royal-600 to-royal-800 px-8 py-3.5 text-center text-sm font-semibold text-white shadow-royal ring-1 ring-white/20 transition hover:brightness-110"
+                class="rounded-xl btn-cta px-8 py-3.5 text-center text-sm"
               >
                 Registrarse como asesor
               </NuxtLink>
@@ -209,7 +209,7 @@ const pasos = [
         </p>
         <NuxtLink
           to="/asesores#agent-form"
-          class="mt-8 inline-flex rounded-xl bg-gradient-to-r from-royal-600 to-royal-800 px-10 py-3.5 text-sm font-semibold text-white shadow-royal ring-1 ring-white/20 transition hover:brightness-110"
+          class="mt-8 inline-flex rounded-xl btn-cta px-10 py-3.5 text-sm"
         >
           Registrarse como asesor
         </NuxtLink>

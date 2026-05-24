@@ -145,6 +145,47 @@
   .preview-galeria-scroll::-webkit-scrollbar-thumb:hover {
     background: rgba(186, 199, 216, 0.48);
   }
+
+  /* Botón principal (CTA): coral */
+  .btn-cta {
+    font-weight: 600;
+    color: #fff;
+    background: linear-gradient(to right, #f97316, #c2410c);
+    border: 1px solid rgba(254, 215, 170, 0.38);
+    box-shadow:
+      0 0 32px rgba(249, 115, 22, 0.32),
+      0 4px 12px rgba(0, 0, 0, 0.22);
+    transition: filter 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .btn-cta:hover:not(:disabled) {
+    filter: brightness(1.08);
+    box-shadow:
+      0 0 38px rgba(251, 146, 60, 0.38),
+      0 6px 16px rgba(0, 0, 0, 0.28);
+  }
+
+  .btn-cta:active:not(:disabled) {
+    filter: brightness(0.96);
+  }
+
+  .btn-cta:focus {
+    outline: none;
+  }
+
+  .btn-cta:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 32px rgba(249, 115, 22, 0.32),
+      0 4px 12px rgba(0, 0, 0, 0.22),
+      0 0 0 2px rgba(251, 146, 60, 0.85),
+      0 0 0 4px rgba(5, 8, 15, 0.95);
+  }
+
+  .btn-cta:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 }
 
 @layer utilities {

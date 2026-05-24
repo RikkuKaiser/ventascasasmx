@@ -1,6 +1,7 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import type { Usuario } from '~/types'
+import { esEmailPublicador } from '~/constants/publishers'
 
 const STORAGE_USERS = 'luxeinmuebles_users'
 const STORAGE_SESSION = 'luxeinmuebles_session'
@@ -29,6 +30,10 @@ export const useAuthStore = defineStore('auth', () => {
     if (!base) return true
     return Boolean(sesion.value.accessToken?.trim())
   })
+
+  const puedePublicarInmuebles = computed(() =>
+    esEmailPublicador(sesion.value?.email),
+  )
 
   function invalidarSesionSiApiRechaza(e: unknown): boolean {
     const code =
@@ -169,6 +174,7 @@ export const useAuthStore = defineStore('auth', () => {
     sesion,
     estaAutenticado,
     sesionValidaParaApi,
+    puedePublicarInmuebles,
     invalidarSesionSiApiRechaza,
     cargarDesdeStorage,
     registrar,
