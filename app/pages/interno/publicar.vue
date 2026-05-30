@@ -26,7 +26,7 @@ const route = useRoute()
 const inputClass =
   'w-full rounded-lg border border-white/[0.08] bg-night-950/50 px-3 py-2 text-sm leading-snug text-white placeholder:text-slate-600 transition-[border-color,box-shadow] focus:border-royal-400/40 focus:outline-none focus:ring-1 focus:ring-royal-500/20'
 
-/** Borde rojo cuando la validaci├│n del env├¡o marca este campo. */
+/** Borde rojo cuando la validación del envío marca este campo. */
 const inputInvalidClass =
   '!border-red-500/60 !ring-1 !ring-red-500/30 focus:!border-red-500/70 focus:!ring-red-500/40'
 
@@ -43,7 +43,7 @@ const zona = ref('')
 const calleNumero = ref('')
 const estado = ref('')
 const cp = ref('')
-const pais = ref('M├®xico')
+const pais = ref('México')
 const lat = ref<number | ''>('')
 const lng = ref<number | ''>('')
 const m2Superficie = ref<number | ''>('')
@@ -171,15 +171,15 @@ const tabsInmueble = [
     label: 'Anuncio',
     step: 1,
     panelTitle: 'Datos principales',
-    panelHint: 'T├¡tulo, descripci├│n y precio: lo primero que ver├ín los compradores.',
+    panelHint: 'Título, descripción y precio: lo primero que verán los compradores.',
   },
   {
     id: 'ubicacion',
-    label: 'Ubicaci├│n',
+    label: 'Ubicación',
     step: 2,
-    panelTitle: '┬┐D├│nde est├í el inmueble?',
+    panelTitle: '¿Dónde está el inmueble?',
     panelHint:
-      'Direcci├│n para ubicar en mapa y listados. El tipo de propiedad va en el siguiente paso.',
+      'Dirección para ubicar en mapa y listados. El tipo de propiedad va en el siguiente paso.',
   },
   {
     id: 'medidas',
@@ -187,14 +187,14 @@ const tabsInmueble = [
     step: 3,
     panelTitle: 'Tipo y medidas',
     panelHint:
-      'Tipo de vivienda, superficies, rec├ímaras, ba├▒os y datos del edificio si aplica.',
+      'Tipo de vivienda, superficies, recámaras, baños y datos del edificio si aplica.',
   },
   {
     id: 'fotos',
     label: 'Multimedia',
     step: 4,
     panelTitle: 'Fotos y extras',
-    panelHint: 'Portada, galer├¡a, video y enlaces opcionales; etiquetas y amenidades.',
+    panelHint: 'Portada, galería, video y enlaces opcionales; etiquetas y amenidades.',
   },
 ] as const
 
@@ -205,13 +205,13 @@ const tabsTerreno = [
     step: 1,
     panelTitle: 'Datos principales',
     panelHint:
-      'Elige el tipo terreno y su subt├¡tulo. T├¡tulo, descripci├│n y precio para el anuncio.',
+      'Elige el tipo terreno y su subtítulo. Título, descripción y precio para el anuncio.',
   },
   {
     id: 'ubicacion',
-    label: 'Ubicaci├│n',
+    label: 'Ubicación',
     step: 2,
-    panelTitle: '┬┐D├│nde est├í tu terreno?',
+    panelTitle: '¿Dónde está tu terreno?',
     panelHint:
       'Calle, municipio y colonia; opcional afinar con el mapa.',
   },
@@ -221,14 +221,14 @@ const tabsTerreno = [
     step: 3,
     panelTitle: 'Superficie, servicios y forma',
     panelHint:
-      'Superficie del lote, servicios, frente y fondo. Sin rec├ímaras ni estacionamiento.',
+      'Superficie del lote, servicios, frente y fondo. Sin recámaras ni estacionamiento.',
   },
   {
     id: 'fotos',
     label: 'Fotos',
     step: 4,
     panelTitle: 'Fotos y multimedia',
-    panelHint: 'Elige foto portada; galer├¡a y enlaces opcionales.',
+    panelHint: 'Elige foto portada; galería y enlaces opcionales.',
   },
 ] as const
 
@@ -237,16 +237,16 @@ const tabs = computed(() =>
 )
 
 const unidadSuperficieOptions = [
-  { value: 'm2', label: 'm┬▓' },
-  { value: 'ha', label: 'Hect├íreas' },
+  { value: 'm2', label: 'm²' },
+  { value: 'ha', label: 'Hectáreas' },
 ]
 
 const estadoTerrenoOptions = [
   { value: 'listo_construir', label: 'Listo para construir' },
-  { value: 'obra_negra', label: 'Construcci├│n en obra negra' },
+  { value: 'obra_negra', label: 'Construcción en obra negra' },
   {
     value: 'venta_como_terreno',
-    label: 'Construcci├│n que se vende como terreno',
+    label: 'Construcción que se vende como terreno',
   },
 ]
 
@@ -286,7 +286,7 @@ function buildAmenidadesTerreno(): string[] {
   }
   if (casetaGuardia.value) out.push('Caseta de vigilancia')
   if (seguridadPrivada.value) out.push('Seguridad privada')
-  if (aptoCredito.value) out.push('Apto para cr├®dito')
+  if (aptoCredito.value) out.push('Apto para crédito')
   return out
 }
 
@@ -397,7 +397,7 @@ function mapsSearchUrl(): string {
   ]
     .map((x) => x.trim())
     .filter(Boolean)
-  const q = encodeURIComponent(parts.join(', ') || 'M├®xico')
+  const q = encodeURIComponent(parts.join(', ') || 'México')
   return `https://www.google.com/maps/search/?api=1&query=${q}`
 }
 
@@ -426,12 +426,12 @@ async function submit() {
   error.value = ''
   campoErrorId.value = null
   if (!auth.sesion) {
-    error.value = 'Debes iniciar sesi├│n para publicar.'
+    error.value = 'Debes iniciar sesión para publicar.'
     await scrollToPublicarField('pub-titulo', tabActiva, campoErrorId)
     return
   }
   if (!titulo.value.trim() || !descripcion.value.trim()) {
-    error.value = 'T├¡tulo y descripci├│n son obligatorios.'
+    error.value = 'Título y descripción son obligatorios.'
     await scrollToPublicarField(
       !titulo.value.trim() ? 'pub-titulo' : 'pub-desc',
       tabActiva,
@@ -447,7 +447,7 @@ async function submit() {
   }
   const precioN = num(precio.value)
   if (precioN <= 0) {
-    error.value = 'Indica un precio v├ílido mayor a cero.'
+    error.value = 'Indica un precio válido mayor a cero.'
     await scrollToPublicarField('pub-precio', tabActiva, campoErrorId)
     return
   }
@@ -467,13 +467,13 @@ async function submit() {
   }
   if (esTerreno.value) {
     if (!calleNumero.value.trim()) {
-      error.value = 'Indica calle y n├║mero (o referencia de ubicaci├│n).'
+      error.value = 'Indica calle y número (o referencia de ubicación).'
       await scrollToPublicarField('pub-calle', tabActiva, campoErrorId)
       return
     }
     const m2s = superficieEnM2()
     if (m2s <= 0) {
-      error.value = 'Indica la superficie del terreno en m┬▓ o hect├íreas.'
+      error.value = 'Indica la superficie del terreno en m² o hectáreas.'
       await scrollToPublicarField('pub-sup-terreno', tabActiva, campoErrorId)
       return
     }
@@ -593,7 +593,7 @@ async function submit() {
 <template>
   <div class="px-4 py-4 sm:px-6 md:py-6 lg:px-10">
     <div class="mx-auto w-full max-w-6xl 2xl:max-w-7xl">
-      <!-- Encabezado compacto: usa el ancho; en lg t├¡tulo + enlace en una fila -->
+      <!-- Encabezado compacto: usa el ancho; en lg título + enlace en una fila -->
       <header
         class="border-b border-white/[0.06] pb-3 md:pb-3"
       >
@@ -611,7 +611,7 @@ async function submit() {
           <p
             class="mx-auto mt-1 max-w-xl text-xs leading-snug text-slate-500 md:mx-0 sm:text-sm"
           >
-            Un solo formulario para casas, departamentos, lofts y terrenos. Cuatro pasos: anuncio, ubicaci├│n, medidas y fotos.
+            Un solo formulario para casas, departamentos, lofts y terrenos. Cuatro pasos: anuncio, ubicación, medidas y fotos.
           </p>
         </div>
       </header>
@@ -621,15 +621,15 @@ async function submit() {
         class="mt-6 rounded-2xl border border-white/[0.08] bg-white/[0.04] p-6 text-center shadow-[0_24px_64px_-24px_rgba(0,0,0,0.5)] backdrop-blur-2xl md:p-8"
       >
         <p class="font-display text-lg font-medium text-white">
-          Inicia sesi├│n para continuar
+          Inicia sesión para continuar
         </p>
         <p class="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-slate-500">
-          Asociamos la publicaci├│n a tu cuenta y la guardamos en el servidor.
+          Asociamos la publicación a tu cuenta y la guardamos en el servidor.
           <span
             v-if="auth.estaAutenticado && !auth.sesionValidaParaApi"
             class="mt-2 block text-amber-400/90"
           >
-            Tu sesi├│n expir├│ o no es v├ílida para el servidor. Vuelve a entrar.
+            Tu sesión expiró o no es válida para el servidor. Vuelve a entrar.
           </span>
         </p>
         <div class="mt-5 flex flex-wrap justify-center gap-2">
@@ -678,7 +678,7 @@ async function submit() {
           class="mb-4 space-y-3 rounded-xl border border-royal-500/25 bg-royal-950/20 px-3 py-3 sm:px-4"
         >
           <div>
-            <p :class="labelClass">Tipo de operaci├│n</p>
+            <p :class="labelClass">Tipo de operación</p>
             <div
               id="pub-operacion"
               class="mt-1.5 inline-flex rounded-lg border border-white/[0.08] bg-night-950/40 p-0.5"
@@ -716,9 +716,9 @@ async function submit() {
               class="rounded-md bg-white/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-royal-200"
               >{{ operacionLabel }}</span
             >
-            <span class="text-slate-500">┬À</span>
+            <span class="text-slate-500">·</span>
             <span>
-              {{ esTerreno ? 'Terreno / lote' : 'Casa, depto., loftÔÇª' }}
+              {{ esTerreno ? 'Terreno / lote' : 'Casa, depto., loft…' }}
             </span>
           </div>
         </div>
@@ -884,7 +884,7 @@ async function submit() {
                   </div>
                   <div v-if="esTerreno">
                     <label :class="labelClass" for="pub-subtipo"
-                      >Subt├¡tulo de inmueble</label
+                      >Subtítulo de inmueble</label
                     >
                     <GlassSelect
                       id="pub-subtipo"
@@ -896,7 +896,7 @@ async function submit() {
                   </div>
                   <div>
                     <label :class="labelClass" for="pub-titulo"
-                      >T├¡tulo del anuncio</label
+                      >Título del anuncio</label
                     >
                     <input
                       id="pub-titulo"
@@ -912,7 +912,7 @@ async function submit() {
                     />
                   </div>
                   <div>
-                    <label :class="labelClass" for="pub-desc">Descripci├│n</label>
+                    <label :class="labelClass" for="pub-desc">Descripción</label>
                     <textarea
                       id="pub-desc"
                       v-model="descripcion"
@@ -922,7 +922,7 @@ async function submit() {
                   inputClass,
                   campoErrorId === 'pub-desc' ? inputInvalidClass : '',
                 ]"
-                placeholder="Describe la propiedad, estado, entornoÔÇª"
+                placeholder="Describe la propiedad, estado, entorno…"
               />
             </div>
                   <div>
@@ -934,7 +934,7 @@ async function submit() {
                       v-model="notas"
                       rows="2"
                       :class="inputClass"
-                      placeholder="Detalles que quieras guardar en la ficha (tambi├®n se env├¡an al servidor)."
+                      placeholder="Detalles que quieras guardar en la ficha (también se envían al servidor)."
                     />
                   </div>
                   <div class="grid gap-3 sm:grid-cols-2 sm:gap-4">
@@ -973,7 +973,7 @@ async function submit() {
                     />
                     <span class="text-xs leading-snug text-slate-400 sm:text-sm">
                       <span class="text-slate-300">Destacar en inicio</span>
-                      ÔÇö uso interno; no se muestra en la tarjeta del cat├ílogo.
+                      — uso interno; no se muestra en la tarjeta del catálogo.
                     </span>
                   </label>
                 </div>
@@ -983,7 +983,7 @@ async function submit() {
                 <div class="space-y-3">
                   <div>
                     <label :class="labelClass" for="pub-calle"
-                      >Calle y n├║mero
+                      >Calle y número
                       <span v-if="esTerreno" class="text-rose-400">*</span></label
                     >
                     <input
@@ -1113,7 +1113,7 @@ async function submit() {
                     </div>
                   </div>
                   <div>
-                    <label :class="labelClass" for="pub-pais">Pa├¡s</label>
+                    <label :class="labelClass" for="pub-pais">País</label>
                     <input
                       id="pub-pais"
                       v-model="pais"
@@ -1163,7 +1163,7 @@ async function submit() {
                     target="_blank"
                     rel="noopener noreferrer"
                     class="inline-flex text-xs font-medium text-royal-300 underline-offset-2 hover:underline"
-                    >Abrir b├║squeda en Google Maps</a
+                    >Abrir búsqueda en Google Maps</a
                   >
                 </div>
               </template>
@@ -1179,7 +1179,7 @@ async function submit() {
                     <div class="grid gap-3 sm:grid-cols-2 sm:gap-4">
                       <div>
                         <label :class="labelClass" for="pub-m2c"
-                          >Superficie construida (m┬▓)</label
+                          >Superficie construida (m²)</label
                         >
                         <input
                           id="pub-m2c"
@@ -1227,7 +1227,7 @@ async function submit() {
                     </div>
                     <fieldset class="space-y-2">
                       <legend :class="labelClass + ' mb-2'">
-                        Antig├╝edad / estado del predio
+                        Antigüedad / estado del predio
                       </legend>
                       <label
                         v-for="opt in estadoTerrenoOptions"
@@ -1392,14 +1392,14 @@ async function submit() {
                     </div>
                     <div>
                       <label :class="labelClass" for="pub-eti"
-                        >Etiquetas extra (coma o l├¡nea)</label
+                        >Etiquetas extra (coma o línea)</label
                       >
                       <input
                         id="pub-eti"
                         v-model="etiquetasTexto"
                         type="text"
                         :class="inputClass"
-                        placeholder="Ej. Esquina, Vista monta├▒a"
+                        placeholder="Ej. Esquina, Vista montaña"
                       />
                     </div>
                   </div>
@@ -1431,7 +1431,7 @@ async function submit() {
                         type="checkbox"
                         class="checkbox-glass"
                       />
-                      Apto para cr├®dito
+                      Apto para crédito
                     </label>
                   </div>
                 </div>
@@ -1439,7 +1439,7 @@ async function submit() {
                   <div class="grid gap-3 sm:grid-cols-2 sm:gap-4">
                     <div>
                       <label :class="labelClass" for="pub-m2s"
-                        >m┬▓ superficie / terreno</label
+                        >m² superficie / terreno</label
                       >
                       <input
                         id="pub-m2s"
@@ -1453,7 +1453,7 @@ async function submit() {
                     </div>
                     <div>
                       <label :class="labelClass" for="pub-m2c"
-                        >m┬▓ construcci├│n</label
+                        >m² construcción</label
                       >
                       <input
                         id="pub-m2c"
@@ -1480,7 +1480,7 @@ async function submit() {
                       />
                     </div>
                     <div>
-                      <label :class="labelClass" for="pub-ban">Ba├▒os</label>
+                      <label :class="labelClass" for="pub-ban">Baños</label>
                       <input
                         id="pub-ban"
                         v-model.number="banos"
@@ -1524,7 +1524,7 @@ async function submit() {
                     <p
                       class="text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-600"
                     >
-                      Opcional ÔÇö departamento o edificio
+                      Opcional — departamento o edificio
                     </p>
                     <div class="grid gap-3 sm:grid-cols-3 sm:gap-4">
                       <div>
@@ -1596,12 +1596,12 @@ async function submit() {
                     <PreviewPortadaArchivo :url="previewPrincipalUrl" />
                     <p class="mt-1 text-[10px] text-slate-600">
                       Con API y GCS configurado, se guarda en
-                      <code class="text-slate-500">inmuebles/&lt;id&gt;/principalÔÇª</code>
+                      <code class="text-slate-500">inmuebles/&lt;id&gt;/principal…</code>
                     </p>
                   </div>
                   <div>
                     <label :class="labelClass" for="pub-file-gal"
-                      >Galer├¡a (archivos)</label
+                      >Galería (archivos)</label
                     >
                     <input
                       id="pub-file-gal"
@@ -1623,19 +1623,19 @@ async function submit() {
                       type="url"
                       :required="!archivoPrincipal"
                       :class="inputClass"
-                      placeholder="https://ÔÇª (si no subes archivo)"
+                      placeholder="https://… (si no subes archivo)"
                     />
                   </div>
                   <div>
                     <label :class="labelClass" for="pub-gal"
-                      >Galer├¡a (URLs, una por l├¡nea)</label
+                      >Galería (URLs, una por línea)</label
                     >
                     <textarea
                       id="pub-gal"
               v-model="galeriaTexto"
               rows="3"
               :class="inputClass"
-                      placeholder="https://ÔÇª"
+                      placeholder="https://…"
                     />
                   </div>
                   <div class="grid gap-3 sm:grid-cols-2 sm:gap-4">
@@ -1648,7 +1648,7 @@ async function submit() {
                         v-model="videoUrl"
                         type="url"
                         :class="inputClass"
-                        placeholder="https://ÔÇª"
+                        placeholder="https://…"
                       />
                     </div>
                     <div>
@@ -1685,26 +1685,26 @@ async function submit() {
                   </div>
                   <div v-if="!esTerreno">
                     <label :class="labelClass" for="pub-eti"
-                      >Etiquetas (coma o l├¡nea nueva)</label
+                      >Etiquetas (coma o línea nueva)</label
                     >
                     <input
                       id="pub-eti"
                       v-model="etiquetasTexto"
                       type="text"
                       :class="inputClass"
-                      placeholder="Nuevo, Amueblado, ÔÇª"
+                      placeholder="Nuevo, Amueblado, …"
                     />
                   </div>
                   <div v-if="!esTerreno">
                     <label :class="labelClass" for="pub-amen"
-                      >Amenidades (coma o l├¡nea nueva)</label
+                      >Amenidades (coma o línea nueva)</label
                     >
                     <textarea
                       id="pub-amen"
               v-model="amenidadesTexto"
               rows="2"
               :class="inputClass"
-                      placeholder="Alberca, Gimnasio, ÔÇª"
+                      placeholder="Alberca, Gimnasio, …"
                     />
                   </div>
                 </div>
@@ -1713,7 +1713,7 @@ async function submit() {
           </Transition>
         </div>
 
-        <!-- Navegaci├│n inferior -->
+        <!-- Navegación inferior -->
         <div
           class="mt-5 flex flex-col gap-4 border-t border-white/[0.06] pt-5 sm:flex-row sm:items-center sm:justify-between"
         >
@@ -1790,7 +1790,7 @@ async function submit() {
             :disabled="enviando"
             class="mt-4 w-full rounded-lg bg-gradient-to-r from-royal-600 to-royal-800 py-3 text-sm font-semibold tracking-wide text-white shadow-royal ring-1 ring-white/10 transition hover:brightness-110 disabled:opacity-50"
           >
-            {{ enviando ? 'PublicandoÔÇª' : 'Publicar en el cat├ílogo' }}
+            {{ enviando ? 'Publicando…' : 'Publicar en el catálogo' }}
           </button>
           <div class="mt-3 text-center">
             <NuxtLink
