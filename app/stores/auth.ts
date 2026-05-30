@@ -149,7 +149,14 @@ export const useAuthStore = defineStore('auth', () => {
         }
         guardarSesion()
         return { ok: true as const }
-      } catch {
+      } catch (e: unknown) {
+        if (esErrorRedApi(e)) {
+          return {
+            ok: false as const,
+            error:
+              'No se pudo conectar con el servidor. Si estás en producción, revisa que el API permita CORS desde este dominio.',
+          }
+        }
         return { ok: false as const, error: 'Correo o contraseña incorrectos.' }
       }
     }
@@ -182,6 +189,20 @@ export const useAuthStore = defineStore('auth', () => {
     cerrarSesion,
   }
 })
+
+function esErrorRedApi(e: unknown): boolean {
+  if (!e || typeof e !== 'object') return false
+  const msg = String(
+    ('message' in e && (e as { message?: string }).message)
+    || ('statusMessage' in e && (e as { statusMessage?: string }).statusMessage)
+    || '',
+  ).toLowerCase()
+  if (msg.includes('failed to fetch') || msg.includes('networkerror'))
+    return true
+  const code = 'statusCode' in e ? Number((e as { statusCode: number }).statusCode) : 0
+  const status = 'status' in e ? Number((e as { status: number }).status) : 0
+  return code === 0 && status === 0
+}
 
 function extractApiMessage(e: unknown, fallback: string): string {
   if (e && typeof e === 'object' && 'data' in e) {
