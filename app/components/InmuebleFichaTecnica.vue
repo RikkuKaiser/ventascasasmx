@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Inmueble, TipoVivienda } from '~/types'
-import { TIPO_VIVIENDA_LABELS } from '~/types'
+import { ESTADO_VIVIENDA_LABELS, TIPO_COCINA_LABELS, TIPO_VIVIENDA_LABELS } from '~/types'
 import { useInmueblesStore } from '~/stores/inmuebles'
 
 const props = defineProps<{ inmueble: Inmueble }>()
@@ -126,6 +126,34 @@ const esDepartamento = computed(
   () => ficha.value.tipoVivienda === 'departamento',
 )
 
+const esCasa = computed(() =>
+  ['casa', 'casa_residencial', 'duplex'].includes(ficha.value.tipoVivienda),
+)
+
+const textoBanos = computed(() => {
+  const completos = ficha.value.banos
+  const medios = pi.value?.mediosBanos
+  if (medios != null && medios > 0) {
+    const m = medios % 1 === 0 ? String(medios) : medios.toFixed(1).replace(/\.0$/, '')
+    return `${completos} ${completos === 1 ? 'baño' : 'baños'} + ${m} ${medios === 1 ? 'medio baño' : 'medios baños'}`
+  }
+  return String(completos)
+})
+
+const etiquetaTipoCocina = computed(() => {
+  const t = pi.value?.tipoCocina
+  if (!t) return null
+  return TIPO_COCINA_LABELS[t] ?? t
+})
+
+const complementosLista = computed(() => pi.value?.complementos ?? [])
+
+const etiquetaEstadoVivienda = computed(() => {
+  const e = pi.value?.estadoVivienda
+  if (!e) return null
+  return ESTADO_VIVIENDA_LABELS[e as keyof typeof ESTADO_VIVIENDA_LABELS] ?? e
+})
+
 const etiquetaTipo = computed(() => {
   const t = ficha.value.tipoVivienda as TipoVivienda | undefined
   if (t && t in TIPO_VIVIENDA_LABELS)
@@ -210,7 +238,7 @@ function fila(claseExtra = '') {
         <div :class="fila()">
           <dt class="shrink-0 text-slate-500">Baños</dt>
           <dd class="text-right font-medium text-white">
-            {{ ficha.banos }}
+            {{ textoBanos }}
           </dd>
         </div>
         <div :class="fila()">
@@ -358,6 +386,15 @@ function fila(claseExtra = '') {
 
       <template v-if="pi && !esTerreno">
         <div
+          v-if="pi.condominio"
+          :class="fila()"
+        >
+          <dt class="shrink-0 text-slate-500">Condominio</dt>
+          <dd class="text-right font-medium text-white">
+            {{ pi.condominio }}
+          </dd>
+        </div>
+        <div
           v-if="direccionPublicacion"
           :class="fila()"
         >
@@ -424,9 +461,25 @@ function fila(claseExtra = '') {
       </template>
 
       <div v-if="!esTerreno && textoNivelesVivienda" :class="fila()">
-        <dt class="shrink-0 text-slate-500">Niveles de la vivienda</dt>
+        <dt class="shrink-0 text-slate-500">
+          {{ esCasa ? 'Niveles de la casa' : 'Niveles de la vivienda' }}
+        </dt>
         <dd class="text-right font-medium text-white">
           {{ textoNivelesVivienda }}
+        </dd>
+      </div>
+
+      <div v-if="!esTerreno && etiquetaEstadoVivienda" :class="fila()">
+        <dt class="shrink-0 text-slate-500">Estado</dt>
+        <dd class="text-right font-medium text-white">
+          {{ etiquetaEstadoVivienda }}
+        </dd>
+      </div>
+
+      <div v-if="!esTerreno && etiquetaTipoCocina" :class="fila()">
+        <dt class="shrink-0 text-slate-500">Tipo de cocina</dt>
+        <dd class="text-right font-medium text-white">
+          {{ etiquetaTipoCocina }}
         </dd>
       </div>
 
@@ -472,6 +525,24 @@ function fila(claseExtra = '') {
         </dd>
       </div>
     </dl>
+
+    <div
+      v-if="complementosLista.length"
+      class="mt-6 border-t border-white/10 pt-5"
+    >
+      <h4 class="text-xs font-semibold uppercase tracking-wider text-royal-300">
+        Complementos
+      </h4>
+      <ul class="mt-3 flex flex-wrap gap-2">
+        <li
+          v-for="c in complementosLista"
+          :key="c"
+          class="rounded-lg bg-white/[0.06] px-2.5 py-1 text-xs font-medium text-slate-200 ring-1 ring-white/10"
+        >
+          {{ c }}
+        </li>
+      </ul>
+    </div>
 
     <div class="mt-6 border-t border-white/10 pt-5">
       <h4 class="text-xs font-semibold uppercase tracking-wider text-royal-300">

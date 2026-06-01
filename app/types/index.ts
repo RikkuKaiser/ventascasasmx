@@ -122,6 +122,8 @@ export interface Inmueble {
 }
 
 /** JSON `publicacion_inmueble` en API. */
+export type EstadoVivienda = 'nueva' | 'usada' | 'remodelada'
+
 export interface PublicacionInmuebleDetalle {
   operacion?: OperacionInmueble
   calleNumero?: string
@@ -135,6 +137,32 @@ export interface PublicacionInmuebleDetalle {
   videos?: string[]
   planosUrl?: string
   notas?: string
+  /** Fraccionamiento, condominio o desarrollo (casas). */
+  condominio?: string
+  /** Medios baños (0.5, 1, 1.5…). */
+  mediosBanos?: number
+  /** integral | semi_integral | basica | americana | abierta | exterior | no_aplica */
+  tipoCocina?: string
+  /** Complementos: closets, cocina equipada, aire acondicionado, etc. */
+  complementos?: string[]
+  /** nueva | usada | remodelada */
+  estadoVivienda?: EstadoVivienda
+}
+
+export const ESTADO_VIVIENDA_LABELS: Record<EstadoVivienda, string> = {
+  nueva: 'Nueva',
+  usada: 'Usada',
+  remodelada: 'Remodelada',
+}
+
+export const TIPO_COCINA_LABELS: Record<string, string> = {
+  integral: 'Integral',
+  semi_integral: 'Semi integral',
+  basica: 'Básica',
+  americana: 'Americana',
+  abierta: 'Abierta / concepto abierto',
+  exterior: 'Exterior / patio de servicio',
+  no_aplica: 'No aplica',
 }
 
 /** Venta o renta según columna API, JSON extendido o etiquetas del anuncio. */

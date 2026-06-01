@@ -26,6 +26,10 @@ const route = useRoute()
 const inputClass =
   'w-full rounded-lg border border-white/[0.08] bg-night-950/50 px-3 py-2 text-sm leading-snug text-white placeholder:text-slate-600 transition-[border-color,box-shadow] focus:border-royal-400/40 focus:outline-none focus:ring-1 focus:ring-royal-500/20'
 
+/** Estilo oscuro para `<input type="file">` (botón + texto del nombre). */
+const fileInputClass =
+  'block w-full cursor-pointer rounded-lg border border-white/[0.08] bg-night-950/50 px-3 py-2 text-xs text-slate-400 file:mr-3 file:cursor-pointer file:rounded-md file:border-0 file:bg-white/10 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-slate-200 hover:file:bg-white/15'
+
 /** Borde rojo cuando la validación del envío marca este campo. */
 const inputInvalidClass =
   '!border-red-500/60 !ring-1 !ring-red-500/30 focus:!border-red-500/70 focus:!ring-red-500/40'
@@ -68,7 +72,12 @@ const pisosVivienda = ref<number | ''>('')
 const pisoDepartamento = ref<number | ''>('')
 const pisosEdificio = ref<number | ''>('')
 const amenidadesTexto = ref('')
+const complementosTexto = ref('')
 const cuotaMantenimiento = ref<number | ''>('')
+const condominio = ref('')
+const mediosBanos = ref<number | ''>('')
+const tipoCocina = ref('')
+const estadoVivienda = ref<'nueva' | 'usada' | 'remodelada' | ''>('')
 const videoUrl = ref('')
 const planosUrl = ref('')
 
@@ -138,6 +147,73 @@ const tipoOptions = computed(() =>
 
 const esTerreno = computed(() => tipoVivienda.value === 'terreno')
 
+const esCasa = computed(() =>
+  ['casa', 'casa_residencial', 'duplex'].includes(tipoVivienda.value),
+)
+
+const esDepartamento = computed(() =>
+  ['departamento', 'loft'].includes(tipoVivienda.value),
+)
+
+const amenidadViviendaFilas: { key: string; label: string }[] = [
+  { key: 'alberca', label: 'Alberca' },
+  { key: 'jardin', label: 'Jardín' },
+  { key: 'terraza', label: 'Terraza' },
+  { key: 'roofGarden', label: 'Roof garden' },
+  { key: 'cuartoServicio', label: 'Cuarto de servicio' },
+  { key: 'estudio', label: 'Estudio' },
+  { key: 'bodega', label: 'Bodega' },
+  { key: 'cisterna', label: 'Cisterna' },
+  { key: 'tinaco', label: 'Tinaco' },
+  { key: 'vigilancia', label: 'Vigilancia 24 h' },
+  { key: 'gimnasio', label: 'Gimnasio' },
+  { key: 'areaJuegos', label: 'Área de juegos' },
+  { key: 'salonEventos', label: 'Salón de usos múltiples' },
+  { key: 'cocheraTechada', label: 'Cochera techada' },
+]
+
+const complementoFilas: { key: string; label: string }[] = [
+  { key: 'closets', label: 'Closets' },
+  { key: 'cocinaEquipada', label: 'Cocina equipada' },
+  { key: 'aireAcondicionado', label: 'Aire acondicionado' },
+  { key: 'calefaccion', label: 'Calefacción' },
+  { key: 'chimenea', label: 'Chimenea' },
+  { key: 'calentadorSolar', label: 'Calentador solar' },
+  { key: 'panelesSolares', label: 'Paneles solares' },
+  { key: 'canceleria', label: 'Cancelería de aluminio' },
+  { key: 'portonElectrico', label: 'Portón eléctrico' },
+  { key: 'patio', label: 'Patio' },
+  { key: 'cuartoTv', label: 'Cuarto de TV' },
+  { key: 'walkInCloset', label: 'Walk-in closet' },
+  { key: 'jacuzzi', label: 'Jacuzzi' },
+  { key: 'elevador', label: 'Elevador' },
+]
+
+const amenidadesCasa = reactive<Record<string, boolean>>(
+  Object.fromEntries(amenidadViviendaFilas.map((r) => [r.key, false])),
+)
+
+const complementosCasa = reactive<Record<string, boolean>>(
+  Object.fromEntries(complementoFilas.map((r) => [r.key, false])),
+)
+
+const tipoCocinaOptions = [
+  { value: '', label: 'Selecciona…' },
+  { value: 'integral', label: 'Integral' },
+  { value: 'semi_integral', label: 'Semi integral' },
+  { value: 'basica', label: 'Básica' },
+  { value: 'americana', label: 'Americana' },
+  { value: 'abierta', label: 'Abierta / concepto abierto' },
+  { value: 'exterior', label: 'Exterior / patio de servicio' },
+  { value: 'no_aplica', label: 'No aplica' },
+]
+
+const estadoViviendaOptions = [
+  { value: 'nueva', label: 'Nueva' },
+  { value: 'usada', label: 'Usada' },
+  { value: 'remodelada', label: 'Remodelada' },
+] as const
+
 const operacionLabel = computed(() =>
   operacion.value === 'renta' ? 'Renta' : 'Venta',
 )
@@ -187,7 +263,7 @@ const tabsInmueble = [
     step: 3,
     panelTitle: 'Tipo y medidas',
     panelHint:
-      'Tipo de vivienda, superficies, recámaras, baños y datos del edificio si aplica.',
+      'Tipo de vivienda, superficies, recámaras, baños, niveles, cocina, amenidades y complementos.',
   },
   {
     id: 'fotos',
@@ -290,6 +366,24 @@ function buildAmenidadesTerreno(): string[] {
   return out
 }
 
+function buildAmenidadesVivienda(): string[] {
+  const out: string[] = []
+  for (const { key, label } of amenidadViviendaFilas) {
+    if (amenidadesCasa[key]) out.push(label)
+  }
+  out.push(...parseLineas(amenidadesTexto.value))
+  return [...new Set(out)]
+}
+
+function buildComplementosVivienda(): string[] {
+  const out: string[] = []
+  for (const { key, label } of complementoFilas) {
+    if (complementosCasa[key]) out.push(label)
+  }
+  out.push(...parseLineas(complementosTexto.value))
+  return [...new Set(out)]
+}
+
 function buildTerrenoCampestre(): TerrenoCampestreDetalle {
   const s: TerrenoServiciosDetalle = {}
   for (const { key } of servicioFilas) {
@@ -383,6 +477,13 @@ function buildPublicacionInmueble(): PublicacionInmuebleDetalle {
   if (videoUrl.value.trim()) o.videoUrl = videoUrl.value.trim()
   if (planosUrl.value.trim()) o.planosUrl = planosUrl.value.trim()
   if (!esTerreno.value && notas.value.trim()) o.notas = notas.value.trim()
+  if (condominio.value.trim()) o.condominio = condominio.value.trim()
+  const mb = optNum(mediosBanos.value)
+  if (mb != null && mb > 0) o.mediosBanos = mb
+  if (tipoCocina.value) o.tipoCocina = tipoCocina.value
+  if (estadoVivienda.value) o.estadoVivienda = estadoVivienda.value
+  const comps = buildComplementosVivienda()
+  if (comps.length) o.complementos = comps
   return o
 }
 
@@ -463,6 +564,18 @@ async function submit() {
   if (!estado.value.trim()) {
     error.value = 'Indica el estado.'
     await scrollToPublicarField('pub-edo', tabActiva, campoErrorId)
+    return
+  }
+  if (esCasa.value && (!pisosVivienda.value || num(pisosVivienda.value) < 1)) {
+    error.value = 'Indica cuántos niveles tiene la casa.'
+    tabActiva.value = 2
+    await scrollToPublicarField('pub-pisos-v', tabActiva, campoErrorId)
+    return
+  }
+  if (!esTerreno.value && !estadoVivienda.value) {
+    error.value = 'Indica el estado de la vivienda: nueva, usada o remodelada.'
+    tabActiva.value = 2
+    await scrollToPublicarField('pub-estado-vivienda', tabActiva, campoErrorId)
     return
   }
   if (esTerreno.value) {
@@ -557,7 +670,7 @@ async function submit() {
       imagen: archivoPrincipal.value ? '' : imagen.value.trim(),
       tipoVivienda: tipoVivienda.value,
       estacionamientos: Math.trunc(num(estacionamientos.value)),
-      amenidades: parseLineas(amenidadesTexto.value),
+      amenidades: buildAmenidadesVivienda(),
       cuotaMantenimiento: num(cuotaMantenimiento.value),
       operacion: operacion.value,
     }
@@ -1035,6 +1148,19 @@ async function submit() {
                     v-if="!esTerreno"
                     class="grid gap-3 sm:grid-cols-2 sm:gap-4"
                   >
+                    <div v-if="esCasa" class="sm:col-span-2">
+                      <label :class="labelClass" for="pub-condominio"
+                        >Condominio / fraccionamiento</label
+                      >
+                      <input
+                        id="pub-condominio"
+                        v-model="condominio"
+                        type="text"
+                        maxlength="300"
+                        :class="inputClass"
+                        placeholder="Ej. Residencial Las Palmas, Condominio Vista Hermosa"
+                      />
+                    </div>
                     <div>
                       <label :class="labelClass" for="pub-cp">C.P.</label>
                       <input
@@ -1435,7 +1561,35 @@ async function submit() {
                     </label>
                   </div>
                 </div>
-                <div v-else class="space-y-3">
+                <div v-else class="space-y-5">
+                  <fieldset id="pub-estado-vivienda" class="space-y-2">
+                    <legend :class="labelClass + ' mb-2'">
+                      Estado de la vivienda
+                      <span class="text-rose-400">*</span>
+                    </legend>
+                    <div class="flex flex-wrap gap-2">
+                      <label
+                        v-for="opt in estadoViviendaOptions"
+                        :key="opt.value"
+                        class="flex cursor-pointer items-center gap-2 rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-white/[0.1]"
+                        :class="
+                          estadoVivienda === opt.value
+                            ? 'border-royal-400/40 bg-royal-950/30 text-white'
+                            : ''
+                        "
+                      >
+                        <input
+                          v-model="estadoVivienda"
+                          type="radio"
+                          name="estado-vivienda"
+                          :value="opt.value"
+                          class="text-royal-500"
+                          required
+                        />
+                        {{ opt.label }}
+                      </label>
+                    </div>
+                  </fieldset>
                   <div class="grid gap-3 sm:grid-cols-2 sm:gap-4">
                     <div>
                       <label :class="labelClass" for="pub-m2s"
@@ -1467,7 +1621,7 @@ async function submit() {
                     </div>
                     <div>
                       <label :class="labelClass" for="pub-hab"
-                        >Habitaciones</label
+                        >Recámaras</label
                       >
                       <input
                         id="pub-hab"
@@ -1480,7 +1634,7 @@ async function submit() {
                       />
                     </div>
                     <div>
-                      <label :class="labelClass" for="pub-ban">Baños</label>
+                      <label :class="labelClass" for="pub-ban">Baños completos</label>
                       <input
                         id="pub-ban"
                         v-model.number="banos"
@@ -1489,6 +1643,20 @@ async function submit() {
                         step="1"
                         required
                         :class="inputClass"
+                      />
+                    </div>
+                    <div>
+                      <label :class="labelClass" for="pub-medios-ban"
+                        >Medios baños</label
+                      >
+                      <input
+                        id="pub-medios-ban"
+                        v-model.number="mediosBanos"
+                        type="number"
+                        min="0"
+                        step="0.5"
+                        :class="inputClass"
+                        placeholder="0, 0.5, 1, 1.5…"
                       />
                     </div>
                     <div>
@@ -1519,12 +1687,42 @@ async function submit() {
                         placeholder="0 si no aplica"
                       />
                     </div>
+                    <div v-if="esCasa">
+                      <label :class="labelClass" for="pub-pisos-v"
+                        >Niveles de la casa <span class="text-rose-400">*</span></label
+                      >
+                      <input
+                        id="pub-pisos-v"
+                        v-model.number="pisosVivienda"
+                        type="number"
+                        min="1"
+                        step="1"
+                        :required="esCasa"
+                        :class="inputClass"
+                        placeholder="Ej. 2"
+                      />
+                    </div>
+                    <div>
+                      <label :class="labelClass" for="pub-tipo-cocina"
+                        >Tipo de cocina</label
+                      >
+                      <GlassSelect
+                        id="pub-tipo-cocina"
+                        v-model="tipoCocina"
+                        :options="tipoCocinaOptions"
+                        comfortable
+                      />
+                    </div>
                   </div>
-                  <div class="space-y-3 border-t border-white/[0.05] pt-4">
+
+                  <div
+                    v-if="esDepartamento"
+                    class="space-y-3 border-t border-white/[0.05] pt-4"
+                  >
                     <p
                       class="text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-600"
                     >
-                      Opcional — departamento o edificio
+                      Departamento o edificio
                     </p>
                     <div class="grid gap-3 sm:grid-cols-3 sm:gap-4">
                       <div>
@@ -1554,11 +1752,11 @@ async function submit() {
                         />
                       </div>
                       <div>
-                        <label :class="labelClass" for="pub-pisos-v"
+                        <label :class="labelClass" for="pub-pisos-v-depto"
                           >Niveles de la vivienda</label
                         >
                         <input
-                          id="pub-pisos-v"
+                          id="pub-pisos-v-depto"
                           v-model.number="pisosVivienda"
                           type="number"
                           min="0"
@@ -1568,6 +1766,70 @@ async function submit() {
                       </div>
                     </div>
                   </div>
+
+                  <fieldset class="space-y-2 border-t border-white/[0.05] pt-4">
+                    <legend :class="labelClass + ' mb-2'">
+                      Amenidades
+                    </legend>
+                    <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                      <label
+                        v-for="row in amenidadViviendaFilas"
+                        :key="row.key"
+                        class="flex cursor-pointer items-center gap-2 rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300"
+                      >
+                        <input
+                          v-model="amenidadesCasa[row.key]"
+                          type="checkbox"
+                          class="checkbox-glass"
+                        />
+                        {{ row.label }}
+                      </label>
+                    </div>
+                    <div class="pt-2">
+                      <label :class="labelClass" for="pub-amen-extra"
+                        >Otras amenidades (opcional)</label
+                      >
+                      <input
+                        id="pub-amen-extra"
+                        v-model="amenidadesTexto"
+                        type="text"
+                        :class="inputClass"
+                        placeholder="Ej. Asador, Cancha de tenis…"
+                      />
+                    </div>
+                  </fieldset>
+
+                  <fieldset class="space-y-2 border-t border-white/[0.05] pt-4">
+                    <legend :class="labelClass + ' mb-2'">
+                      Complementos de la casa
+                    </legend>
+                    <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                      <label
+                        v-for="row in complementoFilas"
+                        :key="row.key"
+                        class="flex cursor-pointer items-center gap-2 rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300"
+                      >
+                        <input
+                          v-model="complementosCasa[row.key]"
+                          type="checkbox"
+                          class="checkbox-glass"
+                        />
+                        {{ row.label }}
+                      </label>
+                    </div>
+                    <div class="pt-2">
+                      <label :class="labelClass" for="pub-comp-extra"
+                        >Otros complementos (opcional)</label
+                      >
+                      <input
+                        id="pub-comp-extra"
+                        v-model="complementosTexto"
+                        type="text"
+                        :class="inputClass"
+                        placeholder="Ej. Persianas, domótica…"
+                      />
+                    </div>
+                  </fieldset>
                 </div>
               </template>
 
@@ -1589,7 +1851,7 @@ async function submit() {
                         id="pub-file-principal"
                         type="file"
                         accept="image/jpeg,image/png,image/webp,image/gif"
-                        class="block w-full cursor-pointer text-xs text-slate-400 file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-white/10 file:px-3 file:py-2 file:text-sm file:text-slate-200 hover:file:bg-white/15"
+                        :class="fileInputClass"
                         @change="onPrincipalFile"
                       />
                     </div>
@@ -1608,7 +1870,7 @@ async function submit() {
                       type="file"
                       accept="image/jpeg,image/png,image/webp,image/gif"
                       multiple
-                      class="block w-full cursor-pointer text-xs text-slate-400 file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-white/10 file:px-3 file:py-2 file:text-sm file:text-slate-200 hover:file:bg-white/15"
+                      :class="fileInputClass"
                       @change="onGaleriaFiles"
                     />
                     <PreviewGaleriaArchivos :items="previewGaleria" />
@@ -1672,7 +1934,7 @@ async function submit() {
                         type="file"
                         accept="video/mp4,video/webm,video/quicktime,video/mpeg,video/x-msvideo"
                         multiple
-                        :class="inputClass"
+                        :class="fileInputClass"
                         @change="onVideosFiles"
                       />
                       <p
@@ -1693,18 +1955,6 @@ async function submit() {
                       type="text"
                       :class="inputClass"
                       placeholder="Nuevo, Amueblado, …"
-                    />
-                  </div>
-                  <div v-if="!esTerreno">
-                    <label :class="labelClass" for="pub-amen"
-                      >Amenidades (coma o línea nueva)</label
-                    >
-                    <textarea
-                      id="pub-amen"
-              v-model="amenidadesTexto"
-              rows="2"
-              :class="inputClass"
-                      placeholder="Alberca, Gimnasio, …"
                     />
                   </div>
                 </div>
@@ -1797,7 +2047,20 @@ async function submit() {
               to="/inmuebles"
               class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-slate-300 transition hover:border-white/15 hover:bg-white/[0.08] hover:text-white"
             >
-              <span aria-hidden="true" class="text-slate-500">ÔåÉ</span>
+              <svg
+                class="h-4 w-4 text-slate-500"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="1.5"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M15.75 19.5 8.25 12l7.5-7.5"
+                />
+              </svg>
               Ver inmuebles
             </NuxtLink>
           </div>
