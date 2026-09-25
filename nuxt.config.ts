@@ -25,14 +25,14 @@ export default defineNuxtConfig({
         || 'Hola, me gustaría recibir más información sobre Ventas Casas MX.',
       /** Correo para ARCO, privacidad y consultas legales (páginas legales) */
       privacidadEmail:
-        process.env.NUXT_PUBLIC_PRIVACIDAD_EMAIL || 'privacidad@ventascasasmx.com',
+        process.env.NUXT_PUBLIC_PRIVACIDAD_EMAIL || 'contacto@ventascasasmx.store',
       /** Domicilio para oír y recibir notificaciones del responsable */
       responsableDomicilio:
         process.env.NUXT_PUBLIC_RESPONSABLE_DOMICILIO
-        || 'Calle Ejemplo 100, Col. Centro, Alcaldía Cuauhtémoc, Ciudad de México, CDMX, C.P. 06000, México',
-      /** Razón social o nombre comercial del responsable (opcional) */
+        || 'México (consulte el sitio web actualizado para dirección específica)',
+      /** Razón social o nombre comercial del responsable */
       responsableNombre:
-        process.env.NUXT_PUBLIC_RESPONSABLE_NOMBRE || 'Ventas Casas MX',
+        process.env.NUXT_PUBLIC_RESPONSABLE_NOMBRE || 'Ventas Casa MX (Cynthia Anacaren Ruiz Cobián)',
     },
   },
   modules: ['@pinia/nuxt', '@nuxtjs/tailwindcss', '@vite-pwa/nuxt'],

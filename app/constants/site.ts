@@ -21,6 +21,7 @@ export const SITEMAP_STATIC_PATHS = [
   '/favoritos',
   '/terminos',
   '/aviso-privacidad',
+  '/quienes-somos',
 ] as const
 
 export function absoluteUrl(path: string, siteUrl: string): string {

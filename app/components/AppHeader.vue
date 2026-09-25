@@ -12,6 +12,7 @@ const links = computed(() => {
   const items = [
     { to: '/', label: 'Inicio' },
     { to: '/inmuebles', label: 'Inmuebles' },
+    { to: '/quienes-somos', label: 'Quiénes somos' },
   ]
   if (auth.puedePublicarInmuebles) {
     items.push({ to: '/interno/publicar', label: 'Publicar' })

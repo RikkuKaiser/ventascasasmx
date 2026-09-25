@@ -83,6 +83,12 @@ function salir() {
           aria-label="Legal"
         >
           <NuxtLink
+            to="/quienes-somos"
+            class="text-slate-500 transition hover:text-royal-300"
+          >
+            Quiénes somos
+          </NuxtLink>
+          <NuxtLink
             to="/terminos"
             class="text-slate-500 transition hover:text-royal-300"
           >
