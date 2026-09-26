@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import { useAuthStore } from '~/stores/auth'
 import { useInmueblesStore } from '~/stores/inmuebles'
 
 const route = useRoute()
 const store = useInmueblesStore()
+const auth = useAuthStore()
 const id = computed(() => String(route.params.id))
 
 const inmueble = computed(() => store.porId(id.value))
@@ -35,12 +37,21 @@ useHead(() => ({
     class="px-3 pb-[max(5.75rem,calc(4.25rem+env(safe-area-inset-bottom)))] pt-2 md:px-4 md:py-10 md:pb-10"
   >
     <div class="mx-auto max-w-5xl">
-      <NuxtLink
-        to="/inmuebles"
-        class="inline-flex items-center gap-2 text-sm text-royal-300 hover:text-white"
-      >
-        ← Volver al catálogo
-      </NuxtLink>
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <NuxtLink
+          to="/inmuebles"
+          class="inline-flex items-center gap-2 text-sm text-royal-300 hover:text-white"
+        >
+          ← Volver al catálogo
+        </NuxtLink>
+        <NuxtLink
+          v-if="auth.puedePublicarInmuebles"
+          :to="`/interno/editar/${inmueble.id}`"
+          class="inline-flex items-center rounded-lg border border-white/15 bg-white/5 px-3 py-1.5 text-sm text-slate-200 transition hover:bg-white/10"
+        >
+          Editar información
+        </NuxtLink>
+      </div>
 
       <div class="mt-6 space-y-5">
         <InmuebleGaleria

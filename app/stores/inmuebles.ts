@@ -3,9 +3,14 @@ import { defineStore } from 'pinia'
 import type { Inmueble } from '~/types'
 import { useAuthStore } from '~/stores/auth'
 
-/** Texto útil para el usuario cuando falla POST /inmuebles o /con-fotos. */
-function mensajeErrorPublicarApi(e: unknown): string {
-  const gen = 'No se pudo publicar. Revisa los datos o tu conexión.'
+/** Texto útil para el usuario cuando falla publicar o editar un inmueble. */
+function mensajeErrorInmuebleApi(
+  e: unknown,
+  accion: 'publicar' | 'guardar',
+): string {
+  const gen = accion === 'guardar'
+    ? 'No se pudieron guardar los cambios. Revisa los datos o tu conexión.'
+    : 'No se pudo publicar. Revisa los datos o tu conexión.'
   if (!e || typeof e !== 'object')
     return gen
   const x = e as {
@@ -147,7 +152,7 @@ export const useInmueblesStore = defineStore('inmuebles', () => {
         if (import.meta.dev)
           console.error('[publicarInmueble]', e)
         auth.invalidarSesionSiApiRechaza(e)
-        return { ok: false, error: mensajeErrorPublicarApi(e) }
+        return { ok: false, error: mensajeErrorInmuebleApi(e, 'publicar') }
       }
     }
     const nextId
@@ -156,11 +161,76 @@ export const useInmueblesStore = defineStore('inmuebles', () => {
     return { ok: true, id: String(nextId) }
   }
 
+  async function actualizarInmueble(
+    id: string | number,
+    cuerpo: Omit<Inmueble, 'id'>,
+    archivos?: { principal?: File | null; galeria?: File[]; videos?: File[] },
+  ): Promise<{ ok: true; id: string } | { ok: false; error: string }> {
+    const auth = useAuthStore()
+    if (!auth.sesion)
+      return { ok: false, error: 'Inicia sesión para editar un inmueble.' }
+    const sid = String(id)
+    const base = useApiBase()
+    if (base) {
+      if (!auth.sesion.accessToken) {
+        return {
+          ok: false,
+          error: 'Tu sesión no es válida para el servidor. Vuelve a entrar.',
+        }
+      }
+      const useMultipart = !!(
+        archivos?.principal
+        || (archivos?.galeria && archivos.galeria.length > 0)
+        || (archivos?.videos && archivos.videos.length > 0)
+      )
+      try {
+        if (useMultipart) {
+          const fd = new FormData()
+          const payload = { ...cuerpo } as Record<string, unknown>
+          if (archivos?.principal)
+            delete payload.imagen
+          fd.append('data', JSON.stringify(payload))
+          if (archivos?.principal)
+            fd.append('principal', archivos.principal)
+          archivos?.galeria?.forEach((f) => fd.append('galeria', f))
+          archivos?.videos?.forEach((f) => fd.append('videos', f))
+          await $fetch<Inmueble>(`${base}/inmuebles/${encodeURIComponent(sid)}/con-fotos`, {
+            method: 'PATCH',
+            headers: { Authorization: `Bearer ${auth.sesion.accessToken}` },
+            body: fd,
+          })
+        }
+        else {
+          await $fetch<Inmueble>(`${base}/inmuebles/${encodeURIComponent(sid)}`, {
+            method: 'PATCH',
+            headers: { Authorization: `Bearer ${auth.sesion.accessToken}` },
+            body: cuerpo,
+          })
+        }
+        await sincronizarDesdeApi()
+        await refrescarInmuebleDesdeApi(sid)
+        return { ok: true, id: sid }
+      } catch (e: unknown) {
+        if (import.meta.dev)
+          console.error('[actualizarInmueble]', e)
+        auth.invalidarSesionSiApiRechaza(e)
+        return { ok: false, error: mensajeErrorInmuebleApi(e, 'guardar') }
+      }
+    }
+    const idx = lista.value.findIndex((i) => String(i.id) === sid)
+    if (idx < 0)
+      return { ok: false, error: 'No encontramos ese inmueble.' }
+    const idNum = Number(sid)
+    lista.value[idx] = { ...cuerpo, id: Number.isFinite(idNum) ? idNum : lista.value[idx].id }
+    return { ok: true, id: sid }
+  }
+
   return {
     lista,
     destacados,
     sincronizarDesdeApi,
     publicarInmueble,
+    actualizarInmueble,
     porId,
     refrescarInmuebleDesdeApi,
     formatearPrecio,

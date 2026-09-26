@@ -23,6 +23,16 @@ const inmuebles = useInmueblesStore()
 const router = useRouter()
 const route = useRoute()
 
+const editId = computed(() => {
+  const fromParam = route.params.id
+  const raw = (Array.isArray(fromParam) ? fromParam[0] : fromParam) || route.query.id
+  const s = Array.isArray(raw) ? raw[0] : raw
+  if (s == null || !/^\d+$/.test(String(s))) return null
+  return String(s)
+})
+const modoEdicion = computed(() => editId.value != null)
+const cargandoEdicion = ref(false)
+
 const inputClass =
   'w-full rounded-lg border border-white/[0.08] bg-night-950/50 px-3 py-2 text-sm leading-snug text-white placeholder:text-slate-600 transition-[border-color,box-shadow] focus:border-royal-400/40 focus:outline-none focus:ring-1 focus:ring-royal-500/20'
 
@@ -223,21 +233,22 @@ const precioLabel = computed(() =>
 )
 
 useHead({
-  title: computed(() =>
-    esTerreno.value
+  title: computed(() => {
+    if (modoEdicion.value) return 'Editar inmueble (interno) — Ventas Casas MX'
+    return esTerreno.value
       ? 'Publicar terreno (interno) — Ventas Casas MX'
-      : 'Publicar inmueble (interno) — Ventas Casas MX',
-  ),
+      : 'Publicar inmueble (interno) — Ventas Casas MX'
+  }),
 })
 
-if (route.query.tipo === 'terreno') {
+if (route.query.tipo === 'terreno' && !editId.value) {
   tipoVivienda.value = 'terreno'
 }
 
 watch(
   () => route.query.tipo,
   (t) => {
-    if (t === 'terreno') tipoVivienda.value = 'terreno'
+    if (t === 'terreno' && !editId.value) tipoVivienda.value = 'terreno'
   },
 )
 
@@ -502,6 +513,154 @@ function mapsSearchUrl(): string {
   return `https://www.google.com/maps/search/?api=1&query=${q}`
 }
 
+function numOrBlank(n: number | null | undefined): number | '' {
+  if (n == null || !Number.isFinite(Number(n))) return ''
+  return Number(n)
+}
+
+function marcarPorEtiqueta(
+  destino: Record<string, boolean>,
+  filas: { key: string; label: string }[],
+  valores: string[],
+): string[] {
+  const porLabel = new Map(filas.map((f) => [f.label, f.key]))
+  for (const key of Object.keys(destino)) destino[key] = false
+  const extras: string[] = []
+  for (const valor of valores) {
+    const key = porLabel.get(valor)
+    if (key) destino[key] = true
+    else if (valor.trim()) extras.push(valor.trim())
+  }
+  return extras
+}
+
+function aplicarInmueble(i: Inmueble) {
+  titulo.value = i.titulo
+  descripcion.value = i.descripcion
+  precio.value = numOrBlank(i.precio)
+  moneda.value = (i.moneda || 'MXN').toUpperCase()
+  ciudad.value = i.ciudad
+  zona.value = i.zona
+  m2Superficie.value = numOrBlank(i.m2Superficie)
+  m2Construccion.value = numOrBlank(i.m2Construccion)
+  habitaciones.value = numOrBlank(i.habitaciones)
+  banos.value = numOrBlank(i.banos)
+  destacado.value = Boolean(i.destacado)
+  imagen.value = i.imagen || ''
+  tipoVivienda.value = i.tipoVivienda
+  operacion.value = i.operacion === 'renta' ? 'renta' : 'venta'
+  estacionamientos.value = numOrBlank(i.estacionamientos)
+  pisosVivienda.value = numOrBlank(i.pisosVivienda)
+  pisoDepartamento.value = numOrBlank(i.pisoDepartamento)
+  pisosEdificio.value = numOrBlank(i.pisosEdificio)
+  cuotaMantenimiento.value = numOrBlank(i.cuotaMantenimiento)
+  archivoPrincipal.value = null
+  archivosGaleria.value = []
+  archivosVideos.value = []
+
+  const tc = i.terrenoCampestre
+  const pi = i.publicacionInmueble
+  const fuente = i.tipoVivienda === 'terreno' ? tc : pi
+
+  calleNumero.value = fuente?.calleNumero ?? ''
+  estado.value = fuente?.estado ?? ''
+  cp.value = fuente?.cp ?? ''
+  pais.value = fuente?.pais || 'México'
+  lat.value = numOrBlank(fuente?.lat)
+  lng.value = numOrBlank(fuente?.lng)
+  notas.value = fuente?.notas ?? ''
+  videoUrl.value = fuente?.videoUrl ?? ''
+  planosUrl.value = fuente?.planosUrl ?? ''
+
+  if (i.tipoVivienda === 'terreno' && tc) {
+    const subtipos = new Set(subtituloTerrenoOptions.map((o) => o.value))
+    subtipoTerreno.value = subtipos.has(tc.subtipo as SubtipoTerreno)
+      ? (tc.subtipo as SubtipoTerreno)
+      : 'terreno_campestre'
+    loteCalle.value = tc.loteCalle ?? ''
+    unidadSuperficie.value = tc.unidadSuperficie === 'ha' ? 'ha' : 'm2'
+    superficieTerreno.value = unidadSuperficie.value === 'ha'
+      ? numOrBlank(i.m2Superficie / 10000)
+      : numOrBlank(i.m2Superficie)
+    const estados = new Set(estadoTerrenoOptions.map((o) => o.value))
+    estadoTerreno.value = estados.has(tc.estadoTerreno as typeof estadoTerreno.value)
+      ? (tc.estadoTerreno as typeof estadoTerreno.value)
+      : 'listo_construir'
+    const formas = new Set(formaTerrenoOptions.map((o) => o.value))
+    formaTerreno.value = formas.has(tc.formaTerreno as typeof formaTerreno.value)
+      ? (tc.formaTerreno as typeof formaTerreno.value)
+      : 'regular'
+    metrosFondo.value = numOrBlank(tc.metrosFondo)
+    metrosFrente.value = numOrBlank(tc.metrosFrente)
+    tipoRiego.value = tc.tipoRiego ?? ''
+    usoSuelo.value = tc.usoSuelo ?? ''
+    manzana.value = tc.manzana ?? ''
+    lotePredial.value = tc.lotePredial ?? ''
+    casetaGuardia.value = Boolean(tc.casetaGuardia)
+    seguridadPrivada.value = Boolean(tc.seguridadPrivada)
+    aptoCredito.value = Boolean(tc.aptoCredito)
+    for (const { key } of servicioFilas) servicios[key] = Boolean(tc.servicios?.[key])
+    amenidadesTexto.value = ''
+    complementosTexto.value = ''
+  }
+  else {
+    condominio.value = pi?.condominio ?? ''
+    mediosBanos.value = numOrBlank(pi?.mediosBanos)
+    tipoCocina.value = pi?.tipoCocina && tipoCocinaOptions.some((o) => o.value === pi.tipoCocina)
+      ? pi.tipoCocina
+      : ''
+    estadoVivienda.value = pi?.estadoVivienda && estadoViviendaOptions.some((o) => o.value === pi.estadoVivienda)
+      ? pi.estadoVivienda
+      : ''
+    amenidadesTexto.value = marcarPorEtiqueta(
+      amenidadesCasa,
+      amenidadViviendaFilas,
+      i.amenidades ?? [],
+    ).join(', ')
+    complementosTexto.value = marcarPorEtiqueta(
+      complementosCasa,
+      complementoFilas,
+      pi?.complementos ?? [],
+    ).join(', ')
+  }
+
+  const ignorar = new Set([
+    'venta',
+    'renta',
+    subtituloEtiqueta().toLowerCase(),
+  ])
+  etiquetasTexto.value = (i.etiquetas ?? [])
+    .filter((t) => !ignorar.has(t.trim().toLowerCase()))
+    .join(', ')
+  galeriaTexto.value = ''
+}
+
+async function cargarEdicion() {
+  if (!editId.value) return
+  cargandoEdicion.value = true
+  error.value = ''
+  try {
+    await inmuebles.refrescarInmuebleDesdeApi(editId.value)
+    const item = inmuebles.porId(editId.value)
+    if (!item) {
+      error.value = 'No encontramos ese inmueble para editarlo.'
+      return
+    }
+    aplicarInmueble(item)
+  }
+  finally {
+    cargandoEdicion.value = false
+  }
+}
+
+onMounted(() => {
+  void cargarEdicion()
+})
+
+watch(editId, () => {
+  void cargarEdicion()
+})
+
 function onPrincipalFile(e: Event) {
   const el = e.target as HTMLInputElement
   archivoPrincipal.value = el.files?.[0] ?? null
@@ -527,7 +686,9 @@ async function submit() {
   error.value = ''
   campoErrorId.value = null
   if (!auth.sesion) {
-    error.value = 'Debes iniciar sesión para publicar.'
+    error.value = modoEdicion.value
+      ? 'Debes iniciar sesión para editar.'
+      : 'Debes iniciar sesión para publicar.'
     await scrollToPublicarField('pub-titulo', tabActiva, campoErrorId)
     return
   }
@@ -637,13 +798,16 @@ async function submit() {
       const gal = parseLineas(galeriaTexto.value)
       if (gal.length) cuerpo.galeria = gal
 
-      const r = await inmuebles.publicarInmueble(cuerpo, {
+      const archivos = {
         principal: archivoPrincipal.value,
         galeria:
           archivosGaleria.value.length > 0 ? archivosGaleria.value : undefined,
         videos:
           archivosVideos.value.length > 0 ? archivosVideos.value : undefined,
-      })
+      }
+      const r = modoEdicion.value && editId.value
+        ? await inmuebles.actualizarInmueble(editId.value, cuerpo, archivos)
+        : await inmuebles.publicarInmueble(cuerpo, archivos)
       if (!r.ok) {
         error.value = r.error
         await scrollToPublicarField('pub-titulo', tabActiva, campoErrorId)
@@ -684,13 +848,16 @@ async function submit() {
     if (pe != null) cuerpo.pisosEdificio = pe
     cuerpo.publicacionInmueble = pi
 
-    const r = await inmuebles.publicarInmueble(cuerpo, {
+    const archivos = {
       principal: archivoPrincipal.value,
       galeria:
         archivosGaleria.value.length > 0 ? archivosGaleria.value : undefined,
       videos:
         archivosVideos.value.length > 0 ? archivosVideos.value : undefined,
-    })
+    }
+    const r = modoEdicion.value && editId.value
+      ? await inmuebles.actualizarInmueble(editId.value, cuerpo, archivos)
+      : await inmuebles.publicarInmueble(cuerpo, archivos)
     if (!r.ok) {
       error.value = r.error
       await scrollToPublicarField('pub-titulo', tabActiva, campoErrorId)
@@ -714,17 +881,24 @@ async function submit() {
           <p
             class="text-[10px] font-semibold uppercase tracking-[0.22em] text-royal-400/90"
           >
-            Alta de propiedad
+            {{ modoEdicion ? 'Edición de propiedad' : 'Alta de propiedad' }}
           </p>
           <h1
             class="mt-0.5 font-display text-xl font-medium tracking-tight text-white sm:text-2xl md:mt-0 lg:text-[1.65rem]"
           >
-            Publicar inmueble
+            {{ modoEdicion ? 'Editar inmueble' : 'Publicar inmueble' }}
           </h1>
           <p
             class="mx-auto mt-1 max-w-xl text-xs leading-snug text-slate-500 md:mx-0 sm:text-sm"
           >
-            Un solo formulario para casas, departamentos, lofts y terrenos. Cuatro pasos: anuncio, ubicación, medidas y fotos.
+            {{
+              modoEdicion
+                ? 'Corrige título, precio, ubicación, medidas y fotos. Lo que no cambies se conserva, incluidas las fotos actuales.'
+                : 'Un solo formulario para casas, departamentos, lofts y terrenos. Cuatro pasos: anuncio, ubicación, medidas y fotos.'
+            }}
+          </p>
+          <p v-if="cargandoEdicion" class="mt-2 text-xs text-royal-300">
+            Cargando la información del inmueble…
           </p>
         </div>
       </header>
@@ -1855,7 +2029,15 @@ async function submit() {
                         @change="onPrincipalFile"
                       />
                     </div>
-                    <PreviewPortadaArchivo :url="previewPrincipalUrl" />
+                    <PreviewPortadaArchivo
+                      :url="previewPrincipalUrl || (modoEdicion ? imagen : null)"
+                    />
+                    <p
+                      v-if="modoEdicion"
+                      class="mt-1 text-[10px] text-slate-500"
+                    >
+                      Si no eliges otro archivo, se conserva la foto principal actual. Las fotos nuevas de galería se agregan.
+                    </p>
                     <p class="mt-1 text-[10px] text-slate-600">
                       Con API y GCS configurado, se guarda en
                       <code class="text-slate-500">inmuebles/&lt;id&gt;/principal…</code>
@@ -2040,7 +2222,11 @@ async function submit() {
             :disabled="enviando"
             class="mt-4 w-full rounded-lg bg-gradient-to-r from-royal-600 to-royal-800 py-3 text-sm font-semibold tracking-wide text-white shadow-royal ring-1 ring-white/10 transition hover:brightness-110 disabled:opacity-50"
           >
-            {{ enviando ? 'Publicando…' : 'Publicar en el catálogo' }}
+            {{
+              enviando
+                ? (modoEdicion ? 'Guardando…' : 'Publicando…')
+                : (modoEdicion ? 'Guardar cambios' : 'Publicar en el catálogo')
+            }}
           </button>
           <div class="mt-3 text-center">
             <NuxtLink

@@ -1,4 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import { resolve } from 'node:path'
 import {
   SITE_DESCRIPTION,
   SITE_NAME,
@@ -143,6 +144,15 @@ export default defineNuxtConfig({
       enabled: process.env.PWA_DEV === 'true',
       suppressWarnings: true,
       type: 'module',
+    },
+  },
+  hooks: {
+    'pages:extend'(pages) {
+      pages.push({
+        name: 'interno-editar',
+        path: '/interno/editar/:id',
+        file: resolve('app/pages/interno/publicar.vue'),
+      })
     },
   },
   app: {

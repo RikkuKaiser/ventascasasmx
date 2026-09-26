@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import type { Inmueble } from '~/types'
 import { operacionInmueble } from '~/types'
+import { useAuthStore } from '~/stores/auth'
 import { useInmueblesStore } from '~/stores/inmuebles'
 
 const props = defineProps<{ inmueble: Inmueble }>()
 const store = useInmueblesStore()
+const auth = useAuthStore()
 
 const esTerreno = computed(() => props.inmueble.tipoVivienda === 'terreno')
 const esRenta = computed(() => operacionInmueble(props.inmueble) === 'renta')
@@ -179,6 +181,13 @@ watch(
             >
           </p>
           <div class="flex flex-wrap items-center justify-end gap-2">
+            <NuxtLink
+              v-if="auth.puedePublicarInmuebles"
+              :to="`/interno/editar/${inmueble.id}`"
+              class="inline-flex h-8 shrink-0 items-center rounded-lg border border-white/15 bg-white/5 px-3 text-sm text-slate-200 transition hover:bg-white/10"
+            >
+              Editar
+            </NuxtLink>
             <WhatsAppInmuebleCta variante="card" :inmueble="inmueble" />
             <NuxtLink
               :to="`/inmuebles/${inmueble.id}`"
